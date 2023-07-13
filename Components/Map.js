@@ -8,6 +8,7 @@ import { getTrailsData } from "./api/TrailsApi";
 import { getRestaurantData } from "./api/Restaurants";
 import { getPlacesData } from "./api/AttractionsApi";
 import * as Location from 'expo-location';
+import Restaurants from "./Restaurants";
 
 export default function Map({ navigation }) {
   const { width, height } = Dimensions.get("window");
@@ -41,6 +42,8 @@ export default function Map({ navigation }) {
     try {
       const data = await getTrailsData(lat, long)
       setTrails(data)
+      setRestaurants([])
+      setAttractions([])
     } catch (error) {
       throw new Error(error)
     }
@@ -50,6 +53,8 @@ export default function Map({ navigation }) {
     try {
       const data = await getRestaurantData(boundary)
       setRestaurants(data)
+      setTrails([])
+      setAttractions([])
     } catch (error) {
       throw new Error(error)
     }
@@ -59,6 +64,8 @@ export default function Map({ navigation }) {
     try {
       const data = await getPlacesData(boundary)
       setAttractions(data)
+      setTrails([])
+      setRestaurants([])
     } catch (error) {
       throw new Error(error)
     }
@@ -135,6 +142,7 @@ export default function Map({ navigation }) {
     })
   }
 
+  console.log('====>',trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -299,8 +307,15 @@ export default function Map({ navigation }) {
           ) : null}
           {trailIds.map((trailId, idx) => {
             const trail = trails[trailId]
-            return <Text key={idx}>{trail.lon}, {trail.lat}</Text>
+            return <Text key={idx}>{trail.name}, {trail.description}</Text>
           })}
+          {restaurants ? (
+            <View style={styles.results} >
+              {restaurants.map((restaurant, idx) => {
+                return <Restaurants key={idx} navigation={navigation} restaurant={restaurant} />;
+              })}
+            </View>
+          ) : null}
         </ScrollView>
       </View>
     </View>
