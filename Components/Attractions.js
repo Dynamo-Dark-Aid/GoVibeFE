@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Image, View, Text, Dimensions, TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 
 export default function Attractions({ attraction, navigation }) {
   return (
@@ -15,11 +14,6 @@ export default function Attractions({ attraction, navigation }) {
         ) : null}
         <View style={styles.textContainer}>
           <Text style={styles.attractionName}>{attraction.name}</Text>
-          {/* <Text>
-            {attraction.description
-              ? attraction.description
-              : "No description available for this attraction"}
-          </Text> */}
         </View>
       </View>
     </TouchableOpacity>
@@ -47,7 +41,6 @@ const styles = StyleSheet.create({
     height: 132,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    // borderRadius: 80
   },
   textContainer: {
     padding: 8,

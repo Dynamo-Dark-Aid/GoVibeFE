@@ -306,13 +306,17 @@ const styles = StyleSheet.create({
     fontFamily: "Futura",
   },
   map: {
-    width: "100%",
-    height: "60%",
+    // width: "100%",
+    // height: "100%",
+    flex: 1
   },
   scrollContainer: {
-    // flex: 1,
-    // padding: 8
-    // flexDirection: "row",
+    // position: "absolute",
+    // top: 10,
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
+    // zIndex: 3,
 
   },
 });
