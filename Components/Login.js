@@ -26,7 +26,7 @@ const Login = () => {
       },
     };
     axios
-      .post("http://localhost:3001/login", userData)
+      .post("https://govibeapi.onrender.com/login", userData)
       .then((response) => {
         // console.log(response);
         console.log(response.data.status.data.user.name);

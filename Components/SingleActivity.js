@@ -15,7 +15,7 @@ const SingleActivity = ({ activity, addToFavorites, addToItinerary }) => {
 
   const loadFavorites = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/add-activity');
+      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
       if (response.status === 200) {
         const favoritesData = response.data;
         setFavorites(favoritesData);
@@ -27,7 +27,7 @@ const SingleActivity = ({ activity, addToFavorites, addToItinerary }) => {
 
   const loadItinerary = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/add-activity');
+      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
       if (response.status === 200) {
         const itineraryData = response.data;
         setItinerary(itineraryData);
@@ -39,7 +39,7 @@ const SingleActivity = ({ activity, addToFavorites, addToItinerary }) => {
 
   const saveFavorites = async () => {
     try {
-      await axios.post('http://localhost:3001/favorites', favorites);
+      await axios.post('https://govibeapi.onrender.com/favorites', favorites);
     } catch (error) {
       console.error('Error saving favorites:', error);
     }
@@ -47,7 +47,7 @@ const SingleActivity = ({ activity, addToFavorites, addToItinerary }) => {
 
   const saveItinerary = async () => {
     try {
-      await axios.post('http://localhost:3001/itinerary', itinerary);
+      await axios.post('https://govibeapi.onrender.com/itinerary', itinerary);
     } catch (error) {
       console.error('Error saving itinerary:', error);
     }

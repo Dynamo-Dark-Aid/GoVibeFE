@@ -27,7 +27,7 @@ const SignUp = () => {
     };
 
     axios
-      .post("http://localhost:3001/signup", userData)
+      .post("https://govibeapi.onrender.com/signup", userData)
       .then((response) => {
         navigation.navigate("Login");
         Alert.alert("Signed up successfully", response.data.message);
