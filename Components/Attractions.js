@@ -15,11 +15,11 @@ export default function Attractions({ attraction, navigation }) {
         ) : null}
         <View style={styles.textContainer}>
           <Text style={styles.attractionName}>{attraction.name}</Text>
-          <Text>
+          {/* <Text>
             {attraction.description
               ? attraction.description
               : "No description available for this attraction"}
-          </Text>
+          </Text> */}
         </View>
       </View>
     </TouchableOpacity>
@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    width: "100%",
-    maxWidth: 250,
+    width: 175,
+    height: 200,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -39,19 +39,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    margin: 4
+    margin: 4,
+    zIndex: 2
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 132,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
+    // borderRadius: 80
   },
   textContainer: {
-    padding: 16,
+    padding: 8,
   },
   attractionName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 8,

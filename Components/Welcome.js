@@ -73,13 +73,11 @@ const styles = StyleSheet.create({
         marginBottom: 24
     },
     icon: {
-        // position: "relative",
         top: -14,
         right: 40
     },
     headerContainer: {
         flexDirection: "row",
-        // justifyContent: "center"
         alignItems: "center"
     }
 
