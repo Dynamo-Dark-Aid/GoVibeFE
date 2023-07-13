@@ -27,7 +27,18 @@ const Itinerary = ({ itinerary, removeActivity }) => {
         console.log(error);
       });
   };
-
+  
+  const loadItinerary = async () => {
+    try {
+      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
+      if (response.status === 200) {
+        const itineraryData = response.data;
+        setItinerary(itineraryData);
+      }
+    } catch (error) {
+      console.error('Error loading itinerary:', error);
+    }
+  };
   const renderActivity = ({ item }) => {
     const { name, image, address } = item;
 

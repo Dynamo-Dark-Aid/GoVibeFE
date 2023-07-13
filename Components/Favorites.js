@@ -12,6 +12,19 @@ const FavoritesPage = ({ favorites, removeFavorite }) => {
     removeFavorite(item);
   };
 
+
+  const loadFavorites = async () => {
+    try {
+      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
+      if (response.status === 200) {
+        const favoritesData = response.data;
+        setFavorites(favoritesData);
+      }
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
+  };
+  
   const handleSort = (value) => {
     setSortOrder(value);
 
