@@ -47,7 +47,7 @@ const TextAnimation = () => {
 
     return (
         <Animated.View style={{ opacity: interpolatedOpacity }}>
-            <Text style={{ fontSize: 25, color: "white", fontFamily: "Futura-Medium", }}>
+            <Text style={{ fontSize: 32, color: "white", fontFamily: "Futura-Medium", }}>
                 {textArray[currentTextIndex]}
             </Text>
         </Animated.View>

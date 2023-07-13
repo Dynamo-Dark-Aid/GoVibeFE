@@ -142,7 +142,7 @@ export default function Map({ navigation }) {
     })
   }
 
-  console.log('====>',trails)
+  console.log('====>', trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -162,18 +162,6 @@ export default function Map({ navigation }) {
     })
   }
 
-  //                 ****** MIGHT ADD LATER FOR GOOGLE PLACES AUTOCOMPLETE SEARCH ********
-
-  // const searchResultMarker = () => {
-  //   return searchResult?.geometry?.location ? (
-  //     <Marker
-  //       coordinate={{
-  //         latitude: searchResult.geometry?.location.lat,
-  //         longitude: searchResult.geometry?.location.lng,
-  //       }}
-  //     ></Marker>
-  //   ) : null;
-  // };
 
   return (
     <View style={styles.container}>
@@ -209,32 +197,6 @@ export default function Map({ navigation }) {
           <Text style={styles.buttonText} >Go Vibe</Text>
         </TouchableOpacity>
       </View>
-
-
-      {/* <GooglePlacesAutocomplete
-        placeholder="Search"
-        minLength={2}
-        autoFocus={false}
-        returnKeyType={"search"}
-        listViewDisplayed="auto"
-        fetchDetails={true}
-        renderDescription={(row) => row.description}
-        onFail={(error) => console.error(error)}
-        // currentLocation={true}
-        onPress={(data, details = null) => {
-          // Use the selected place data
-          setSearchResult(details);
-          // console.log(data, details);
-          // console.log("searchResult ----------------->", searchResult);
-        }}
-        query={{
-          key: GOOGLE_PLACES_API_KEY,
-          language: "en",
-        }}
-        nearbyPlacesAPI="GooglePlacesSearch"
-        debounce={200}
-      /> */}
-
 
 
       <View>
@@ -283,21 +245,11 @@ export default function Map({ navigation }) {
       <View>
       </View>
 
-      {/* <View style={styles.scrollContainer}>
-        <ScrollView style={styles.scroll}>
-          {attractions ? (
-            <View style={styles.results}>
-              {attractions.map((attraction, idx) => {
-                return <Attractions key={idx} navigation={navigation} attraction={attraction} />;
-              })}
-            </View>
-          ) : null
-          }
-        </ScrollView>
-      </View> */}
-
-      <View style={styles.scrollContainer}>
-        <ScrollView style={styles.scroll}>
+      <View>
+        <ScrollView
+          horizontal={true}
+          snapToAlignment="center"
+          contentContainerStyle={styles.scrollContainer}>
           {attractions ? (
             <View style={styles.results} >
               {attractions.map((attraction, idx) => {
@@ -318,7 +270,7 @@ export default function Map({ navigation }) {
           ) : null}
         </ScrollView>
       </View>
-    </View>
+    </View >
   );
 
 }
@@ -328,16 +280,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   results: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'row',
   },
   buttonContainer: {
     position: 'absolute',
     top: "10%",
-    // left: '50%',
-    // transform: [
-    //   { translateX: -50 },
-    //   { translateY: -50 },
-    // ],
     alignSelf: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -358,17 +306,74 @@ const styles = StyleSheet.create({
     fontFamily: "Futura",
   },
   map: {
-    width: "100%",
-    height: "60%",
+    // width: "100%",
+    // height: "100%",
+    flex: 1
   },
-  // scroll: {
-  //   flex: 1,
-  //   flexDirection: "row"
-  // },
-  // scrollContainer: {
-  //   flex: 1
-  // },
-  // resultsContainer: {
-  //   flexDirection: 'row',
-  // },
+  scrollContainer: {
+    // position: "absolute",
+    // top: 10,
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
+    // zIndex: 3,
+
+  },
 });
+
+
+
+
+
+//                 ****** MIGHT ADD LATER FOR GOOGLE PLACES AUTOCOMPLETE SEARCH ********
+
+// const searchResultMarker = () => {
+//   return searchResult?.geometry?.location ? (
+//     <Marker
+//       coordinate={{
+//         latitude: searchResult.geometry?.location.lat,
+//         longitude: searchResult.geometry?.location.lng,
+//       }}
+//     ></Marker>
+//   ) : null;
+// };
+
+{/* <GooglePlacesAutocomplete
+        placeholder="Search"
+        minLength={2}
+        autoFocus={false}
+        returnKeyType={"search"}
+        listViewDisplayed="auto"
+        fetchDetails={true}
+        renderDescription={(row) => row.description}
+        onFail={(error) => console.error(error)}
+        // currentLocation={true}
+        onPress={(data, details = null) => {
+          // Use the selected place data
+          setSearchResult(details);
+          // console.log(data, details);
+          // console.log("searchResult ----------------->", searchResult);
+        }}
+        query={{
+          key: GOOGLE_PLACES_API_KEY,
+          language: "en",
+        }}
+        nearbyPlacesAPI="GooglePlacesSearch"
+        debounce={200}
+      /> */}
+
+
+
+
+{/* <View style={styles.scrollContainer}>
+        <ScrollView style={styles.scroll}>
+          {attractions ? (
+            <View style={styles.results}>
+              {attractions.map((attraction, idx) => {
+                return <Attractions key={idx} navigation={navigation} attraction={attraction} />;
+              })}
+            </View>
+          ) : null
+          }
+        </ScrollView>
+      </View> */}
