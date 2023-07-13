@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useDispatch } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal, SafeAreaView } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_PLACES_API_KEY } from "../googlePlacesConfig";
 import Attractions from "../Components/Attractions";
@@ -142,7 +142,7 @@ export default function Map({ navigation }) {
     })
   }
 
-  console.log('====>',trails)
+  console.log('====>', trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -176,7 +176,7 @@ export default function Map({ navigation }) {
   // };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -318,7 +318,7 @@ export default function Map({ navigation }) {
           ) : null}
         </ScrollView>
       </View>
-    </View>
+    </SafeAreaView>
   );
 
 }
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: "10%",
+    bottom: ".5%",
     // left: '50%',
     // transform: [
     //   { translateX: -50 },
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 20,
     marginHorizontal: 48,
-    alignItems: "center"
+    alignItems: "center",
   },
   buttonText: {
     color: "#FFFFFF",
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "60%",
+    height: "100%",
   },
   // scroll: {
   //   flex: 1,
