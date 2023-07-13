@@ -1,24 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Animated, Alert, Image } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Alert, Image, SafeAreaView } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import TextAnimation from "./TextAnimation";
 
 const Welcome = ({ navigation }) => {
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View>
+            <View style={styles.headerContainer}>
                 <Text style={styles.header}>Go Vibe
-                    <MaterialIcons
-                        name="location-on"
-                        size={50}
-                        color="#2757F0"
-                        iconStyle={styles.icon} />
                 </Text>
-                <Text style={styles.body}>Discover <TextAnimation /></Text>
-                <Text style={styles.body}>right around the corner.</Text>
+                <MaterialIcons
+                    name="location-on"
+                    size={50}
+                    color="#2757F0"
+                    style={styles.icon}
+                />
             </View>
-            <View>
+            <Text style={styles.body}>Discover <TextAnimation /></Text>
+            <Text style={styles.body}>right around the corner.</Text>
+            </View>
+            {/* </View> */}
+            <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
                     <Text style={styles.buttonText}>Let's Go</Text>
                 </TouchableOpacity>
@@ -26,7 +30,7 @@ const Welcome = ({ navigation }) => {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     )
 };
 
@@ -38,7 +42,7 @@ const styles = StyleSheet.create({
     },
     header: {
         color: "#FFFFFF",
-        fontSize: 50,
+        fontSize: 60,
         fontFamily: "Futura-CondensedExtraBold",
         marginHorizontal: 40,
         marginBottom: 20,
@@ -46,7 +50,7 @@ const styles = StyleSheet.create({
     },
     body: {
         color: "#FFFFFF",
-        fontSize: 25,
+        fontSize: 32,
         fontFamily: "Futura-CondensedExtraBold",
         marginHorizontal: 40,
 
@@ -56,72 +60,29 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         padding: 8,
-        marginBottom: 20,
+        marginBottom: 16,
         marginHorizontal: 48,
         alignItems: "center"
     },
     buttonText: {
         color: "#E8F0F2",
-        fontSize: 20,
+        fontSize: 24,
         fontFamily: "Futura",
     },
-    icon: {
-        margin: 30,
+    buttonContainer: {
+        marginBottom: 24
     },
+    icon: {
+        // position: "relative",
+        top: -14,
+        right: 40
+    },
+    headerContainer: {
+        flexDirection: "row",
+        // justifyContent: "center"
+        alignItems: "center"
+    }
 
 });
 
 export default Welcome;
-
-
-
-
-
-// import React from "react";
-// import { Button, ImageBackground } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { TextInput, StyleSheet, Text, View, Alert, Image } from "react-native";
-// import { TouchableOpacity } from "react-native";
-
-// const Welcome = ({ navigation }) => {
-//     return (
-//         <View style={styles.container}>
-//             <Image style={styles.image} source={require("../Assets/logo3.png")} />
-
-//             <TouchableOpacity>
-//                 <Button
-//                     style={styles.button}
-//                     title="Lets Go!"
-//                     onPress={() => navigation.navigate("Home")}
-//                 />
-//                 <Button
-//                     style={styles.button}
-//                     title="Login"
-//                     onPress={() => navigation.navigate("Login")}
-//                 />
-//             </TouchableOpacity>
-//         </View>
-//     );
-// };
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         justifyContent: "center",
-//         alignContent: "center",
-//         backgroundColor: "#000000",
-//         height: "100%",
-//     },
-//     image: {
-//         position: "absolute",
-//         right: 150,
-//         top: 150,
-//     },
-//     button: {
-//         margin: 1,
-//         backgroundColor: "white",
-//         borderRadius: 5
-//     },
-// });
-
-// export default Welcome;
