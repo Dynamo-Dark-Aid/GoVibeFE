@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "GoVibeFe",
+    "slug": "GoVibeFe",
+    "version": "1.0.0",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow GoVibe to use your location."
+        }
+      ]
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5792f81e-c552-4f71-a2db-8d0bfff0835c"
+      }
+    }
+  }
+}
