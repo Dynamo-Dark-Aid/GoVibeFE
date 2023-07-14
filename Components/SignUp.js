@@ -1,21 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import {
   SafeAreaView,
   StyleSheet,
   TextInput,
   Text,
-  Button,
+  TouchableOpacity,
   Alert,
+  View,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const SignUp = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = React.useState();
-  const [name, setName] = React.useState();
-  const [password, setPassword] = React.useState();
-  const [confirmPassword, setConfirmPassword] = React.useState();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSignUp = () => {
     const userData = {
@@ -34,16 +35,12 @@ const SignUp = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
-          alert(
+          Alert.alert(
             "Email must be valid and password must be at least 6 characters long"
           );
         }
       });
   };
-  //receive info and send to backend
-  //make regular post request
-  //email, name, password (signup) POST (signup)
-  //name, password GET (login)
 
   const handleButton = () => {
     if (!email || !name || !confirmPassword) {
@@ -67,6 +64,7 @@ const SignUp = () => {
         onChangeText={setEmail}
         value={email}
         placeholder="Enter your email"
+        placeholderTextColor="#E8F0F2"
       />
       <TextInput
         autoCapitalize="none"
@@ -74,6 +72,7 @@ const SignUp = () => {
         onChangeText={setName}
         value={name}
         placeholder="Create a username"
+        placeholderTextColor="#E8F0F2"
       />
       <TextInput
         autoCapitalize="none"
@@ -82,6 +81,7 @@ const SignUp = () => {
         onChangeText={setPassword}
         value={password}
         placeholder="Create a password"
+        placeholderTextColor="#E8F0F2"
       />
       <TextInput
         autoCapitalize="none"
@@ -90,42 +90,66 @@ const SignUp = () => {
         onChangeText={setConfirmPassword}
         value={confirmPassword}
         placeholder="Confirm your password"
+        placeholderTextColor="#E8F0F2"
       />
-      <Button
-        style={styles.button}
-        title="Register"
-        onPress={handleButton}
-      ></Button>
-      <Text style={styles.policy}>
-        By registering, you confirm that you accept our Terms of Use and Privacy
-        Policy
-      </Text>
+
+      <View>
+        <TouchableOpacity style={styles.button} onPress={handleButton}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.policy}>
+          By registering, you confirm that you accept our Terms of Use and
+          Privacy Policy
+        </Text>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    width: 200,
+    borderColor: "#E8F0F2",
+    borderWidth: 2,
+    borderRadius: 10,
+    height: 50,
+    width: 280,
     margin: 12,
-    borderWidth: 1,
     padding: 10,
+    color: "#E8F0F2",
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "black",
   },
   title: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
+    color: "#FFFFFF",
+  },
+  button: {
+    borderColor: "#E8F0F2",
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 8,
+    marginBottom: 20,
+    marginHorizontal: 38,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#E8F0F2",
+    fontSize: 20,
+    fontFamily: "Futura",
   },
   policy: {
     fontSize: 10,
     textAlign: "center",
-    width: 200,
+
+    color: "#E8F0F2",
   },
 });
 
