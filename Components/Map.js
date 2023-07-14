@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useDispatch } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_PLACES_API_KEY } from "../googlePlacesConfig";
 import Attractions from "../Components/Attractions";
@@ -26,17 +26,27 @@ export default function Map({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [option, setOption] = useState("attractions");
 
-  const handleOption = () => {
+  //map loading when api calls testing:
+  const [loading, setLoading] = useState(false);
+
+  // change little bit about handleOption function:
+  const handleOption = async () => {
+    setLoading(true);
+
     if (option === "attractions") {
-      activityData(boundary);
+      await activityData(boundary);
     }
     if (option === "restaurants") {
-      restaurantdata(boundary)
+      await restaurantdata(boundary);
     }
     if (option === "trails") {
-      traildata()
+      await traildata();
     }
-  }
+
+    setLoading(false);
+  };
+
+
 
   const traildata = async () => {
     try {
@@ -165,6 +175,8 @@ export default function Map({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+      {loading ? <ActivityIndicator style={styles.loadingSpinner} /> : null}
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -178,6 +190,7 @@ export default function Map({ navigation }) {
             }
             : null
         }
+        loadingEnabled={true}
         showsMyLocationButton={true}
         showsUserLocation={true}
         zoomControlEnabled={true}
@@ -202,7 +215,7 @@ export default function Map({ navigation }) {
       <View>
         <Button
           title="Options"
-          color="yellow"
+          color="blue"
           onPress={() => setModalVisible(true)}
         />
 
@@ -245,7 +258,7 @@ export default function Map({ navigation }) {
       <View>
       </View>
 
-      <View>
+      <View style={styles.overlay}>
         <ScrollView
           horizontal={true}
           snapToAlignment="center"
@@ -286,6 +299,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
     top: "10%",
+    // right: 0,
     alignSelf: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -310,14 +324,21 @@ const styles = StyleSheet.create({
     // height: "100%",
     flex: 1
   },
-  scrollContainer: {
-    // position: "absolute",
+  overlay: {
+    position: "absolute",
     // top: 10,
-    // bottom: 0,
+    bottom: 0,
     // left: 0,
     // right: 0,
-    // zIndex: 3,
-
+    zIndex: 3,
+  },
+  loadingSpinner: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: [{ translateX: -20 }, { translateY: -20 }],
+    zIndex: 2,
+    backgroundColor: "black",
   },
 });
 

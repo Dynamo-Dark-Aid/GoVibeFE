@@ -71,7 +71,7 @@ function Home() {
 
                         <MaterialCommunityIcons
                             style={styles.icon}
-                            name="format-list-numbered"
+                            name="map-marker-path"
                             color={color}
                             size={22} />
                     ),
