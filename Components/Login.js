@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,8 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { loginSuccess, setUserName } from "../store";
 import { useNavigation } from "@react-navigation/native";
+import { login } from './slices/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -25,24 +24,7 @@ const Login = () => {
         password: password,
       },
     };
-    axios
-      .post("https://govibeapi.onrender.com/login", userData)
-      .then((response) => {
-        // console.log(response);
-        console.log(response.data.status.data.user.name);
-        if (response.status === 200) {
-          dispatch(loginSuccess(true)); // Dispatch the loginSuccess action
-
-          dispatch(setUserName(response.data.status.data.user.name)); // Dispatch the setUserName action
-
-          navigation.navigate("Home");
-          Alert.alert("Logged in successfully", response.data.message);
-        }
-      })
-      .catch((error) => {
-        Alert.alert("Try again");
-        console.log(error);
-      });
+    dispatch(login(userData));
   };
 
   const handleButton = () => {
