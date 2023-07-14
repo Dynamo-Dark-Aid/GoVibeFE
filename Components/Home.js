@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Profile from "./Profile";
@@ -10,6 +10,7 @@ import Map from "./Map";
 const Tab = createBottomTabNavigator();
 
 function Home() {
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -42,6 +43,7 @@ function Home() {
               color={color}
               size={size}
               style={styles.icon}
+
             />
           ),
         }}

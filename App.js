@@ -35,6 +35,7 @@ export default function App() {
             }}
           />
 
+
           <Stack.Screen
             name="Login"
             component={Login}
@@ -51,6 +52,7 @@ export default function App() {
               headerTitle: "",
             }}
           />
+
           <Stack.Screen name="Map" component={Map} />
           <Stack.Screen name="Attractions" component={Attractions} />
           <Stack.Screen name="SingleActivity" component={SingleActivity} />
