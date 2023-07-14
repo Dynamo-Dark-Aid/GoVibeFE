@@ -9,6 +9,7 @@ import { getRestaurantData } from "./api/Restaurants";
 import { getPlacesData } from "./api/AttractionsApi";
 import * as Location from 'expo-location';
 import Restaurants from "./Restaurants";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Map({ navigation }) {
   const { width, height } = Dimensions.get("window");
@@ -25,6 +26,7 @@ export default function Map({ navigation }) {
   const [boundary, setBoundary] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [option, setOption] = useState("attractions");
+  const [zoom, setZoom] = useState(20)
 
   //map loading when api calls testing:
   const [loading, setLoading] = useState(false);
@@ -212,13 +214,14 @@ export default function Map({ navigation }) {
       </View>
 
 
-      <View>
-        <Button
-          title="Options"
-          color="blue"
-          onPress={() => setModalVisible(true)}
-        />
-
+      <View style={styles.modalContainer}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <MaterialCommunityIcons
+            name="plus-circle"
+            size={44}
+            color={"#414849"}
+          />
+        </TouchableOpacity>
         <Modal
           animationType="fade"
           visible={modalVisible}
@@ -312,7 +315,8 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 20,
     marginHorizontal: 48,
-    alignItems: "center"
+    alignItems: "center",
+    width: 200
   },
   buttonText: {
     color: "#FFFFFF",
@@ -320,16 +324,11 @@ const styles = StyleSheet.create({
     fontFamily: "Futura",
   },
   map: {
-    // width: "100%",
-    // height: "100%",
     flex: 1
   },
   overlay: {
     position: "absolute",
-    // top: 10,
     bottom: 0,
-    // left: 0,
-    // right: 0,
     zIndex: 3,
   },
   loadingSpinner: {
@@ -338,8 +337,16 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -20 }, { translateY: -20 }],
     zIndex: 2,
-    backgroundColor: "black",
+    color: "#2757F0",
   },
+  modalContainer: {
+    position: 'absolute',
+    top: "10%",
+    right: 20,
+    alignSelf: "flex-end",
+    justifyContent: "center",
+    zIndex: 2,
+  }
 });
 
 
