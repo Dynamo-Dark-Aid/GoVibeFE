@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useDispatch } from "react";
+import React, { useEffect, useState, useDispatch, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_PLACES_API_KEY } from "../googlePlacesConfig";
 import Attractions from "../Components/Attractions";
@@ -9,10 +9,11 @@ import { getRestaurantData } from "./api/Restaurants";
 import { getPlacesData } from "./api/AttractionsApi";
 import * as Location from 'expo-location';
 import Restaurants from "./Restaurants";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Map({ navigation }) {
   const { width, height } = Dimensions.get("window");
-
+  const mapRef = useRef(null)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [lat, setLat] = useState(null);
@@ -23,20 +24,31 @@ export default function Map({ navigation }) {
   const [trails, setTrails] = useState([])
   const [restaurants, setRestaurants] = useState([])
   const [boundary, setBoundary] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
   const [option, setOption] = useState("attractions");
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  const handleOption = () => {
+  //map loading when api calls testing:
+  const [loading, setLoading] = useState(false);
+
+  // change little bit about handleOption function:
+  const handleOption = async () => {
+    setLoading(true);
+
     if (option === "attractions") {
-      activityData(boundary);
+      await activityData(boundary);
     }
     if (option === "restaurants") {
-      restaurantdata(boundary)
+      await restaurantdata(boundary);
     }
     if (option === "trails") {
-      traildata()
+      await traildata();
     }
-  }
+
+    setLoading(false);
+  };
+
+
 
   const traildata = async () => {
     try {
@@ -44,6 +56,10 @@ export default function Map({ navigation }) {
       setTrails(data)
       setRestaurants([])
       setAttractions([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(trail => ({ latitude: Number(trail.lat), longitude: Number(trail.lon) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -55,6 +71,10 @@ export default function Map({ navigation }) {
       setRestaurants(data)
       setTrails([])
       setAttractions([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(restaurant => ({ latitude: Number(restaurant.latitude), longitude: Number(restaurant.longitude) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -66,6 +86,10 @@ export default function Map({ navigation }) {
       setAttractions(data)
       setTrails([])
       setRestaurants([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(activity => ({ latitude: Number(activity.latitude), longitude: Number(activity.longitude) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -162,11 +186,19 @@ export default function Map({ navigation }) {
     })
   }
 
+  const toggleMenu = () => {
+    setDropdownOpen(!dropdownOpen)
+  }
+
+
 
   return (
     <View style={styles.container}>
+
+      {loading ? <ActivityIndicator style={styles.loadingSpinner} /> : null}
       <MapView
         style={styles.map}
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         region={
           mapLayout
@@ -178,6 +210,7 @@ export default function Map({ navigation }) {
             }
             : null
         }
+        loadingEnabled={true}
         showsMyLocationButton={true}
         showsUserLocation={true}
         zoomControlEnabled={true}
@@ -199,53 +232,52 @@ export default function Map({ navigation }) {
       </View>
 
 
-      <View>
-        <Button
-          title="Options"
-          color="yellow"
-          onPress={() => setModalVisible(true)}
-        />
+      <View style={styles.dropdownContainer}>
 
-        <Modal
-          animationType="fade"
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View>
+        <TouchableOpacity onPress={() => toggleMenu()}>
+          <MaterialCommunityIcons
+            name="chevron-down-circle"
+            size={44}
+            color={"#414849"}
+          // backgroundColor="white"
+          // border="black"
+          />
+        </TouchableOpacity>
+
+        {dropdownOpen ?
+
+
+          <View style={styles.modal}>
             <Button
               title="Attractions"
-              color="red"
               onPress={() => {
                 setOption("attractions");
-                setModalVisible(!modalVisible);
+                setDropdownOpen(!dropdownOpen);
               }}
             />
             <Button
               title="Restaurants"
-              color="red"
               onPress={() => {
                 setOption("restaurants");
-                setModalVisible(!modalVisible);
+                setDropdownOpen(!dropdownOpen);
               }}
             />
             <Button
               title="Trails"
-              color="red"
               onPress={() => {
                 setOption("trails");
-                setModalVisible(!modalVisible);
+                setDropdownOpen(!dropdownOpen);
               }}
             />
           </View>
-        </Modal>
+          : null}
       </View>
+
 
       <View>
       </View>
 
-      <View>
+      <View style={styles.overlay}>
         <ScrollView
           horizontal={true}
           snapToAlignment="center"
@@ -298,7 +330,8 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 20,
     marginHorizontal: 48,
-    alignItems: "center"
+    alignItems: "center",
+    width: 200
   },
   buttonText: {
     color: "#FFFFFF",
@@ -306,18 +339,36 @@ const styles = StyleSheet.create({
     fontFamily: "Futura",
   },
   map: {
-    // width: "100%",
-    // height: "100%",
     flex: 1
   },
-  scrollContainer: {
-    // position: "absolute",
-    // top: 10,
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
-    // zIndex: 3,
-
+  overlay: {
+    position: "absolute",
+    bottom: 0,
+    zIndex: 3,
+  },
+  loadingSpinner: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: [{ translateX: -20 }, { translateY: -20 }],
+    zIndex: 2,
+    color: "black",
+  },
+  dropdownContainer: {
+    position: 'absolute',
+    top: "10%",
+    right: 40,
+    alignSelf: "flex-end",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  modal: {
+    width: 250,
+    height: 150,
+    backgroundColor: "white",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
@@ -377,3 +428,47 @@ const styles = StyleSheet.create({
           }
         </ScrollView>
       </View> */}
+
+    //   <View style={styles.modalContainer}>
+    //   <TouchableOpacity onPress={() => setModalVisible(true)}>
+    //     <MaterialCommunityIcons
+    //       name="plus-circle"
+    //       size={44}
+    //       color={"#414849"}
+    //     />
+    //   </TouchableOpacity>
+    //   <Modal
+    //     style={styles.modal}
+    //     animationType="fade"
+    //     visible={modalVisible}
+    //     onRequestClose={() => {
+    //       setModalVisible(!modalVisible);
+    //     }}
+    //   >
+    //     <View style={styles.modalResults}>
+    //       <View style={styles.modal}>
+    //         <Button
+    //           title="Attractions"
+    //           onPress={() => {
+    //             setOption("attractions");
+    //             setModalVisible(!modalVisible);
+    //           }}
+    //         />
+    //         <Button
+    //           title="Restaurants"
+    //           onPress={() => {
+    //             setOption("restaurants");
+    //             setModalVisible(!modalVisible);
+    //           }}
+    //         />
+    //         <Button
+    //           title="Trails"
+    //           onPress={() => {
+    //             setOption("trails");
+    //             setModalVisible(!modalVisible);
+    //           }}
+    //         />
+    //       </View>
+    //     </View>
+    //   </Modal>
+    // </View>
