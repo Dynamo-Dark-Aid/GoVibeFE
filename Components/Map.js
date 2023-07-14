@@ -24,7 +24,6 @@ export default function Map({ navigation }) {
   const [trails, setTrails] = useState([])
   const [restaurants, setRestaurants] = useState([])
   const [boundary, setBoundary] = useState({});
-  // const [modalVisible, setModalVisible] = useState(false);
   const [option, setOption] = useState("attractions");
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
@@ -166,7 +165,7 @@ export default function Map({ navigation }) {
     })
   }
 
-  console.log('====>', trails)
+  // console.log('====>', trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -191,11 +190,10 @@ export default function Map({ navigation }) {
   }
 
 
-
   return (
     <View style={styles.container}>
 
-      {loading ? <ActivityIndicator style={styles.loadingSpinner} /> : null}
+      {loading ? <ActivityIndicator style={styles.loadingSpinner} size="large" color="black" /> : null}
       <MapView
         style={styles.map}
         ref={mapRef}
@@ -239,13 +237,10 @@ export default function Map({ navigation }) {
             name="chevron-down-circle"
             size={44}
             color={"#414849"}
-          // backgroundColor="white"
-          // border="black"
           />
         </TouchableOpacity>
 
         {dropdownOpen ?
-
 
           <View style={styles.modal}>
             <Button
@@ -281,7 +276,8 @@ export default function Map({ navigation }) {
         <ScrollView
           horizontal={true}
           snapToAlignment="center"
-          contentContainerStyle={styles.scrollContainer}>
+          contentContainerStyle={styles.scrollContainer}
+        >
           {attractions ? (
             <View style={styles.results} >
               {attractions.map((attraction, idx) => {
@@ -291,7 +287,16 @@ export default function Map({ navigation }) {
           ) : null}
           {trailIds.map((trailId, idx) => {
             const trail = trails[trailId]
-            return <Text key={idx}>{trail.name}, {trail.description}</Text>
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate("SingleActivity", { activity: trail })}>
+                <View style={styles.cardContainer} key={idx}>
+                  <Text style={styles.attractionName}>{trail.name}</Text>
+                  <View>
+                    <Text>{trail.description}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
           })}
           {restaurants ? (
             <View style={styles.results} >
@@ -331,7 +336,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginHorizontal: 48,
     alignItems: "center",
-    width: 200
+    width: 200,
   },
   buttonText: {
     color: "#FFFFFF",
@@ -352,12 +357,11 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -20 }, { translateY: -20 }],
     zIndex: 2,
-    color: "black",
   },
   dropdownContainer: {
     position: 'absolute',
     top: "10%",
-    right: 40,
+    left: 40,
     alignSelf: "flex-end",
     justifyContent: "center",
     zIndex: 2,
@@ -369,6 +373,29 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  cardContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    width: 175,
+    height: 200,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    margin: 4,
+    zIndex: 2,
+    padding: 8
+  },
+  attractionName: {
+    paddingBottom: 4,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
 
@@ -428,47 +455,3 @@ const styles = StyleSheet.create({
           }
         </ScrollView>
       </View> */}
-
-    //   <View style={styles.modalContainer}>
-    //   <TouchableOpacity onPress={() => setModalVisible(true)}>
-    //     <MaterialCommunityIcons
-    //       name="plus-circle"
-    //       size={44}
-    //       color={"#414849"}
-    //     />
-    //   </TouchableOpacity>
-    //   <Modal
-    //     style={styles.modal}
-    //     animationType="fade"
-    //     visible={modalVisible}
-    //     onRequestClose={() => {
-    //       setModalVisible(!modalVisible);
-    //     }}
-    //   >
-    //     <View style={styles.modalResults}>
-    //       <View style={styles.modal}>
-    //         <Button
-    //           title="Attractions"
-    //           onPress={() => {
-    //             setOption("attractions");
-    //             setModalVisible(!modalVisible);
-    //           }}
-    //         />
-    //         <Button
-    //           title="Restaurants"
-    //           onPress={() => {
-    //             setOption("restaurants");
-    //             setModalVisible(!modalVisible);
-    //           }}
-    //         />
-    //         <Button
-    //           title="Trails"
-    //           onPress={() => {
-    //             setOption("trails");
-    //             setModalVisible(!modalVisible);
-    //           }}
-    //         />
-    //       </View>
-    //     </View>
-    //   </Modal>
-    // </View>

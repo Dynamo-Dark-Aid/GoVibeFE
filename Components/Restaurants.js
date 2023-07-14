@@ -15,11 +15,11 @@ export default function Restaurants({ restaurant, navigation }) {
         ) : null}
         <View style={styles.textContainer}>
           <Text style={styles.attractionName}>{restaurant.name}</Text>
-          <Text>
+          {/* <Text>
             {restaurant.description
               ? restaurant.description
               : "No description available for this attraction"}
-          </Text>
+          </Text> */}
         </View>
       </View>
     </TouchableOpacity>
