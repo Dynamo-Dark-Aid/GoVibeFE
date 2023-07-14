@@ -1,16 +1,9 @@
 
-import React, { useState, useEffect } from "react";
-import { useRoute } from "@react-navigation/native";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Linking,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { useRoute } from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
+import axios from 'axios';
+
 
 const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
   const route = useRoute();

@@ -8,20 +8,23 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { loginSuccess } from "../store";
 import { useNavigation } from "@react-navigation/native";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { logout } from "./slices/authSlice";
+
 
 const Profile = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
-  const userName = useSelector((state) => state.userName);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userName = useSelector((state) => state.auth.userName);
 
   const handleLogout = () => {
-    dispatch(loginSuccess()); // Dispatch the loginSuccess action
+    dispatch(logout()); // Dispatch the loginSuccess action
   };
 
+  console.log("User is not logged in", isLoggedIn)
   if (!isLoggedIn) {
     return (
       <SafeAreaView style={styles.container}>
