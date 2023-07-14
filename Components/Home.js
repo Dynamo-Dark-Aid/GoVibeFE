@@ -11,111 +11,23 @@ const Tab = createBottomTabNavigator();
 
 function Home() {
 
-  return (
-    <Tab.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        // headerBackTitle: false,
-        // headerBackTitleVisible: false,
-        tabBarStyle: {
-          backgroundColor: "#414849",
-          paddingBottom: 8,
-          paddingTop: 8,
-          borderRadius: 30,
-          margin: 4,
-        },
-        tabBarActiveTintColor: "#86B6FF",
-        tabBarInactiveTintColor: "white",
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen
-        name="Map"
-        component={Map}
-        options={{
-          headerShown: false,
-          // // headerTitle: false,
-          // headerBackTitleVisible: false,
-          tabBarLabel: "Map",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="map-marker"
-              color={color}
-              size={size}
-              style={styles.icon}
-
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Favorites"
-        component={Favorites}
-        options={{
-          // headerShown: false,
-          tabBarLabel: "Favorites",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="heart"
-              color={color}
-              size={22}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Itinerary"
-        component={Itinerary}
-        options={{
-          headerShown: false,
-          tabBarLabel: "Today's Vibe",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="format-list-numbered"
-              color={color}
-              size={22}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          headerShown: false,
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="account"
-              color={color}
-              size={22}
-            />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
     return (
         <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName="Home"
             screenOptions={{
                 // headerBackTitle: false,
                 // headerBackTitleVisible: false,
                 tabBarStyle: {
-                    backgroundColor: '#414849',
+                    backgroundColor: "#414849",
                     paddingBottom: 8,
                     paddingTop: 8,
                     borderRadius: 30,
                     margin: 4,
                 },
-                tabBarActiveTintColor: '#86B6FF',
-                tabBarInactiveTintColor: 'white',
+                tabBarActiveTintColor: "#86B6FF",
+                tabBarInactiveTintColor: "white",
                 headerShown: false,
             }}
-
         >
             <Tab.Screen
                 name="Map"
@@ -124,13 +36,14 @@ function Home() {
                     headerShown: false,
                     // // headerTitle: false,
                     // headerBackTitleVisible: false,
-                    tabBarLabel: 'Map',
+                    tabBarLabel: "Map",
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
                             name="map-marker"
                             color={color}
                             size={size}
                             style={styles.icon}
+
                         />
                     ),
                 }}
@@ -140,15 +53,17 @@ function Home() {
                 component={Favorites}
                 options={{
                     // headerShown: false,
-                    tabBarLabel: 'Favorites',
+                    tabBarLabel: "Favorites",
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
                             style={styles.icon}
                             name="heart"
                             color={color}
-                            size={22} />
+                            size={22}
+                        />
                     ),
-                }} />
+                }}
+            />
             <Tab.Screen
                 name="Itinerary"
                 component={Itinerary}
@@ -156,42 +71,127 @@ function Home() {
                     headerShown: false,
                     tabBarLabel: "Today's Vibe",
                     tabBarIcon: ({ color, size }) => (
-
                         <MaterialCommunityIcons
                             style={styles.icon}
                             name="map-marker-path"
                             color={color}
-                            size={22} />
+                            size={22}
+                        />
                     ),
-                }} />
+                }}
+            />
             <Tab.Screen
                 name="Profile"
                 component={Profile}
                 options={{
                     headerShown: false,
-                    tabBarLabel: 'Profile',
+                    tabBarLabel: "Profile",
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
                             style={styles.icon}
                             name="account"
                             color={color}
-                            size={22} />
+                            size={22}
+                        />
                     ),
-                }} />
+                }}
+            />
         </Tab.Navigator>
     );
+    // return (
+    //     <Tab.Navigator
+    //         initialRouteName='Home'
+    //         screenOptions={{
+    //             // headerBackTitle: false,
+    //             // headerBackTitleVisible: false,
+    //             tabBarStyle: {
+    //                 backgroundColor: '#414849',
+    //                 paddingBottom: 8,
+    //                 paddingTop: 8,
+    //                 borderRadius: 30,
+    //                 margin: 4,
+    //             },
+    //             tabBarActiveTintColor: '#86B6FF',
+    //             tabBarInactiveTintColor: 'white',
+    //             headerShown: false,
+    //         }}
+
+    //     >
+    //         <Tab.Screen
+    //             name="Map"
+    //             component={Map}
+    //             options={{
+    //                 headerShown: false,
+    //                 // // headerTitle: false,
+    //                 // headerBackTitleVisible: false,
+    //                 tabBarLabel: 'Map',
+    //                 tabBarIcon: ({ color, size }) => (
+    //                     <MaterialCommunityIcons
+    //                         name="map-marker"
+    //                         color={color}
+    //                         size={size}
+    //                         style={styles.icon}
+    //                     />
+    //                 ),
+    //             }}
+    //         />
+    //         <Tab.Screen
+    //             name="Favorites"
+    //             component={Favorites}
+    //             options={{
+    //                 // headerShown: false,
+    //                 tabBarLabel: 'Favorites',
+    //                 tabBarIcon: ({ color, size }) => (
+    //                     <MaterialCommunityIcons
+    //                         style={styles.icon}
+    //                         name="heart"
+    //                         color={color}
+    //                         size={22} />
+    //                 ),
+    //             }} />
+    //         <Tab.Screen
+    //             name="Itinerary"
+    //             component={Itinerary}
+    //             options={{
+    //                 headerShown: false,
+    //                 tabBarLabel: "Today's Vibe",
+    //                 tabBarIcon: ({ color, size }) => (
+
+    //                     <MaterialCommunityIcons
+    //                         style={styles.icon}
+    //                         name="map-marker-path"
+    //                         color={color}
+    //                         size={22} />
+    //                 ),
+    //             }} />
+    //         <Tab.Screen
+    //             name="Profile"
+    //             component={Profile}
+    //             options={{
+    //                 headerShown: false,
+    //                 tabBarLabel: 'Profile',
+    //                 tabBarIcon: ({ color, size }) => (
+    //                     <MaterialCommunityIcons
+    //                         style={styles.icon}
+    //                         name="account"
+    //                         color={color}
+    //                         size={22} />
+    //                 ),
+    //             }} />
+    //     </Tab.Navigator>
+    // );
 }
 
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  tabLabel: {
-    marginTop: 2,
-    color: "white",
-    fontSize: 12,
-  },
+    tabContainer: {
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    tabLabel: {
+        marginTop: 2,
+        color: "white",
+        fontSize: 12,
+    },
 });
 
 export default Home;
