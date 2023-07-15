@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useDispatch } from "react";
+import React, { useEffect, useState, useDispatch, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Button, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_PLACES_API_KEY } from "../googlePlacesConfig";
 import Attractions from "../Components/Attractions";
@@ -8,10 +8,12 @@ import { getTrailsData } from "./api/TrailsApi";
 import { getRestaurantData } from "./api/Restaurants";
 import { getPlacesData } from "./api/AttractionsApi";
 import * as Location from 'expo-location';
+import Restaurants from "./Restaurants";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Map({ navigation }) {
   const { width, height } = Dimensions.get("window");
-
+  const mapRef = useRef(null)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [lat, setLat] = useState(null);
@@ -22,25 +24,41 @@ export default function Map({ navigation }) {
   const [trails, setTrails] = useState([])
   const [restaurants, setRestaurants] = useState([])
   const [boundary, setBoundary] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
   const [option, setOption] = useState("attractions");
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  const handleOption = () => {
+  //map loading when api calls testing:
+  const [loading, setLoading] = useState(false);
+
+  // change little bit about handleOption function:
+  const handleOption = async () => {
+    setLoading(true);
+
     if (option === "attractions") {
-      activityData(boundary);
+      await activityData(boundary);
     }
     if (option === "restaurants") {
-      restaurantdata(boundary)
+      await restaurantdata(boundary);
     }
     if (option === "trails") {
-      traildata()
+      await traildata();
     }
-  }
+
+    setLoading(false);
+  };
+
+
 
   const traildata = async () => {
     try {
       const data = await getTrailsData(lat, long)
       setTrails(data)
+      setRestaurants([])
+      setAttractions([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(trail => ({ latitude: Number(trail.lat), longitude: Number(trail.lon) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -50,6 +68,12 @@ export default function Map({ navigation }) {
     try {
       const data = await getRestaurantData(boundary)
       setRestaurants(data)
+      setTrails([])
+      setAttractions([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(restaurant => ({ latitude: Number(restaurant.latitude), longitude: Number(restaurant.longitude) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -59,6 +83,12 @@ export default function Map({ navigation }) {
     try {
       const data = await getPlacesData(boundary)
       setAttractions(data)
+      setTrails([])
+      setRestaurants([])
+      mapRef.current.fitToCoordinates(Object.values(data).map(activity => ({ latitude: Number(activity.latitude), longitude: Number(activity.longitude) })), {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
     } catch (error) {
       throw new Error(error)
     }
@@ -135,6 +165,7 @@ export default function Map({ navigation }) {
     })
   }
 
+  // console.log('====>', trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -154,23 +185,18 @@ export default function Map({ navigation }) {
     })
   }
 
-  //                 ****** MIGHT ADD LATER FOR GOOGLE PLACES AUTOCOMPLETE SEARCH ********
+  const toggleMenu = () => {
+    setDropdownOpen(!dropdownOpen)
+  }
 
-  // const searchResultMarker = () => {
-  //   return searchResult?.geometry?.location ? (
-  //     <Marker
-  //       coordinate={{
-  //         latitude: searchResult.geometry?.location.lat,
-  //         longitude: searchResult.geometry?.location.lng,
-  //       }}
-  //     ></Marker>
-  //   ) : null;
-  // };
 
   return (
     <View style={styles.container}>
+
+      {loading ? <ActivityIndicator style={styles.loadingSpinner} size="large" color="black" /> : null}
       <MapView
         style={styles.map}
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         region={
           mapLayout
@@ -182,6 +208,7 @@ export default function Map({ navigation }) {
             }
             : null
         }
+        loadingEnabled={true}
         showsMyLocationButton={true}
         showsUserLocation={true}
         zoomControlEnabled={true}
@@ -203,7 +230,193 @@ export default function Map({ navigation }) {
       </View>
 
 
-      {/* <GooglePlacesAutocomplete
+      <View style={styles.dropdownContainer}>
+
+        <TouchableOpacity onPress={() => toggleMenu()}>
+          <MaterialCommunityIcons
+            name="chevron-down-circle"
+            size={44}
+            color={"#414849"}
+          />
+        </TouchableOpacity>
+
+        {dropdownOpen ?
+
+          <View style={styles.modal}>
+            <Button
+              title="Attractions"
+              onPress={() => {
+                setOption("attractions");
+                setDropdownOpen(!dropdownOpen);
+              }}
+            />
+            <Button
+              title="Restaurants"
+              onPress={() => {
+                setOption("restaurants");
+                setDropdownOpen(!dropdownOpen);
+              }}
+            />
+            <Button
+              title="Trails"
+              onPress={() => {
+                setOption("trails");
+                setDropdownOpen(!dropdownOpen);
+              }}
+            />
+          </View>
+          : null}
+      </View>
+
+
+      <View>
+      </View>
+
+      <View style={styles.overlay}>
+        <ScrollView
+          horizontal={true}
+          snapToAlignment="center"
+          contentContainerStyle={styles.scrollContainer}
+        >
+          {attractions ? (
+            <View style={styles.results} >
+              {attractions.map((attraction, idx) => {
+                return <Attractions key={idx} navigation={navigation} attraction={attraction} />;
+              })}
+            </View>
+          ) : null}
+          {trailIds.map((trailId, idx) => {
+            const trail = trails[trailId]
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate("SingleActivity", { activity: trail })}>
+                <View style={styles.cardContainer} key={idx}>
+                  <Text style={styles.attractionName}>{trail.name}</Text>
+                  <View>
+                    <Text>{trail.description}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
+          })}
+          {restaurants ? (
+            <View style={styles.results} >
+              {restaurants.map((restaurant, idx) => {
+                return <Restaurants key={idx} navigation={navigation} restaurant={restaurant} />;
+              })}
+            </View>
+          ) : null}
+        </ScrollView>
+      </View>
+    </View >
+  );
+
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  results: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: "10%",
+    alignSelf: "center",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  button: {
+    borderColor: "#2757F0",
+    backgroundColor: "#2757F0",
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 8,
+    marginBottom: 20,
+    marginHorizontal: 48,
+    alignItems: "center",
+    width: 200,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontFamily: "Futura",
+  },
+  map: {
+    flex: 1
+  },
+  overlay: {
+    position: "absolute",
+    bottom: 0,
+    zIndex: 3,
+  },
+  loadingSpinner: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: [{ translateX: -20 }, { translateY: -20 }],
+    zIndex: 2,
+  },
+  dropdownContainer: {
+    position: 'absolute',
+    top: "10%",
+    left: 40,
+    alignSelf: "flex-end",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  modal: {
+    width: 250,
+    height: 150,
+    backgroundColor: "white",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    width: 175,
+    height: 200,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    margin: 4,
+    zIndex: 2,
+    padding: 8
+  },
+  attractionName: {
+    paddingBottom: 4,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+});
+
+
+
+
+
+//                 ****** MIGHT ADD LATER FOR GOOGLE PLACES AUTOCOMPLETE SEARCH ********
+
+// const searchResultMarker = () => {
+//   return searchResult?.geometry?.location ? (
+//     <Marker
+//       coordinate={{
+//         latitude: searchResult.geometry?.location.lat,
+//         longitude: searchResult.geometry?.location.lng,
+//       }}
+//     ></Marker>
+//   ) : null;
+// };
+
+{/* <GooglePlacesAutocomplete
         placeholder="Search"
         minLength={2}
         autoFocus={false}
@@ -229,53 +442,8 @@ export default function Map({ navigation }) {
 
 
 
-      <View>
-        <Button
-          title="Options"
-          color="yellow"
-          onPress={() => setModalVisible(true)}
-        />
 
-        <Modal
-          animationType="fade"
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View>
-            <Button
-              title="Attractions"
-              color="red"
-              onPress={() => {
-                setOption("attractions");
-                setModalVisible(!modalVisible);
-              }}
-            />
-            <Button
-              title="Restaurants"
-              color="red"
-              onPress={() => {
-                setOption("restaurants");
-                setModalVisible(!modalVisible);
-              }}
-            />
-            <Button
-              title="Trails"
-              color="red"
-              onPress={() => {
-                setOption("trails");
-                setModalVisible(!modalVisible);
-              }}
-            />
-          </View>
-        </Modal>
-      </View>
-
-      <View>
-      </View>
-
-      {/* <View style={styles.scrollContainer}>
+{/* <View style={styles.scrollContainer}>
         <ScrollView style={styles.scroll}>
           {attractions ? (
             <View style={styles.results}>
@@ -287,73 +455,3 @@ export default function Map({ navigation }) {
           }
         </ScrollView>
       </View> */}
-
-      <View style={styles.scrollContainer}>
-        <ScrollView style={styles.scroll}>
-          {attractions ? (
-            <View style={styles.results} >
-              {attractions.map((attraction, idx) => {
-                return <Attractions key={idx} navigation={navigation} attraction={attraction} />;
-              })}
-            </View>
-          ) : null}
-          {trailIds.map((trailId, idx) => {
-            const trail = trails[trailId]
-            return <Text key={idx}>{trail.lon}, {trail.lat}</Text>
-          })}
-        </ScrollView>
-      </View>
-    </View>
-  );
-
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  results: {
-    flex: 1
-  },
-  buttonContainer: {
-    position: 'absolute',
-    top: "10%",
-    // left: '50%',
-    // transform: [
-    //   { translateX: -50 },
-    //   { translateY: -50 },
-    // ],
-    alignSelf: "center",
-    justifyContent: "center",
-    zIndex: 2,
-  },
-  button: {
-    borderColor: "#2757F0",
-    backgroundColor: "#2757F0",
-    borderWidth: 2,
-    borderRadius: 10,
-    padding: 8,
-    marginBottom: 20,
-    marginHorizontal: 48,
-    alignItems: "center"
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontFamily: "Futura",
-  },
-  map: {
-    width: "100%",
-    height: "60%",
-  },
-  // scroll: {
-  //   flex: 1,
-  //   flexDirection: "row"
-  // },
-  // scrollContainer: {
-  //   flex: 1
-  // },
-  // resultsContainer: {
-  //   flexDirection: 'row',
-  // },
-});

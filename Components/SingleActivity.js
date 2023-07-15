@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
+import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
 
-const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
+const SingleActivity = () => {
+  const dispatch = useDispatch();
   const route = useRoute();
   const { activity } = route.params || {};
+  const activityItems = useSelector(state => state.activity.activityItems);
+  const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
+  const isActivityFavorite = activityItems.some(item => item.name === activity.name);
+  const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
 
-  const [favorites, setFavorites] = useState([]);
-  const [itinerary, setItinerary] = useState([]);
+  useEffect(() => {
+    dispatch(getActivities());
+  }, [dispatch]);
 
-  const saveFavorites = async () => {
-    try {
-      await axios.post('https://govibeapi.onrender.com/favorites', favorites);
-    } catch (error) {
-      console.error('Error saving favorites:', error);
-    }
-  };
+  useEffect(() => {
+    console.log("THIS IS ITINERARY", itineraryItems)
+    dispatch(displayItinerary());
+  }, [dispatch]);
 
-  const saveItinerary = async () => {
-    try {
-      await axios.post('https://govibeapi.onrender.com/itineraries', itinerary);
-    } catch (error) {
-      console.error('Error saving itinerary:', error);
-    }
-  };
+  console.log("activityItems", activityItems)
 
   const handleDirections = () => {
     if (activity && activity.address) {
@@ -36,42 +35,36 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
   };
 
   const handleAddToFavorites = () => {
-    addToFavorites(activity);
-    setFavorites(prevFavorites => [...prevFavorites, activity]);
+    const activityData = {
+      activity: {
+        name: activity.name,
+        location: activity.address
+      }
+    }
+    dispatch(addActivity(activityData));
   };
 
   const handleAddToItinerary = () => {
-    addToItinerary(activity);
-    setItinerary(prevItinerary => [...prevItinerary, activity]);
+    const itineraryData = {
+      itinerary: {
+        name: activity.name,
+        location: activity.address
+      }
+    }
+    dispatch(addToItinerary(itineraryData));
   };
 
   const handleRemoveFromFavorites = () => {
-    const updatedFavorites = favorites.filter(favorite => favorite.id !== activity.id);
-    setFavorites(updatedFavorites);
+    dispatch(removeActivity(activity));
   };
 
-  useEffect(() => {
-    if (favorites.length > 0) {
-      saveFavorites();
-    }
-  }, [favorites]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Activity Details',
-    });
-  }, []);
-
-  useEffect(() => {
-    if (itinerary.length > 0) {
-      saveItinerary();
-    }
-  }, [itinerary]);
+  const handleRemoveFromItinerary = () => {
+    dispatch(removeFromItinerary(activity));
+  }
 
   if (!activity) {
     return null;
   }
-
   let image = null;
   if (
     activity.photo &&
@@ -81,9 +74,7 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
   ) {
     image = activity.photo.images.large.url;
   }
-
   const imageSource = image ? { uri: image } : null;
-
   return (
     <View style={styles.container}>
       {imageSource && (
@@ -91,6 +82,7 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
           <Image source={imageSource} style={styles.image} resizeMode="cover" />
         </View>
       )}
+
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{activity.name}</Text>
         <Text style={styles.address}>{activity.address}</Text>
@@ -98,33 +90,44 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
         <TouchableOpacity style={styles.button} onPress={handleDirections}>
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
-        {favorites.some(favorite => favorite.id === activity.id) ? (
+
+        {isActivityFavorite ? (
           <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
             <Text style={styles.buttonText}>Remove from Favorites</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={handleAddToFavorites}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleAddToFavorites}
+          >
+
             <Text style={styles.buttonText}>Add to Favorites</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
-          <Text style={styles.buttonText}>Add to Itinerary</Text>
-        </TouchableOpacity>
+        {isActivityInItinerary ? (
+          <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
+            <Text style={styles.buttonText}>Remove from Itinerary</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
+            <Text style={styles.buttonText}>Add to Itinerary</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 };
 
-const { height } = Dimensions.get('window');
-
+const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   imageContainer: {
-    width: '100%',
+    width: "100%",
+
     height: height / 3,
   },
   image: {
@@ -132,13 +135,17 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+
+    alignItems: "center",
+    justifyContent: "center",
+
     paddingHorizontal: 20,
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
+
+    fontWeight: "bold",
+
     marginBottom: 10,
   },
   address: {
@@ -152,20 +159,20 @@ const styles = StyleSheet.create({
   button: {
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: '#42a5f5',
+
+    backgroundColor: "#42A5F5",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
-
 SingleActivity.navigationOptions = {
-  title: 'Activity Details',
+  title: "Activity Details",
 };
-
 export default SingleActivity;
+

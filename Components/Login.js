@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
+  View,
   SafeAreaView,
   StyleSheet,
   TextInput,
   Text,
-  Button,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { loginSuccess, setUserName } from "../store";
 import { useNavigation } from "@react-navigation/native";
+import { login } from "./slices/authSlice";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -25,23 +25,13 @@ const Login = () => {
         password: password,
       },
     };
-    axios
-      .post("https://govibeapi.onrender.com/login", userData)
-      .then((response) => {
-        // console.log(response);
-        console.log(response.data.status.data.user.name);
-        if (response.status === 200) {
-          dispatch(loginSuccess(true)); // Dispatch the loginSuccess action
-
-          dispatch(setUserName(response.data.status.data.user.name)); // Dispatch the setUserName action
-
-          navigation.navigate("Home");
-          Alert.alert("Logged in successfully", response.data.message);
-        }
+    dispatch(login(userData))
+      .then(() => {
+        navigation.navigate("Home");
+        Alert.alert("Login Successful");
       })
-      .catch((error) => {
-        Alert.alert("Try again");
-        console.log(error);
+      .catch((err) => {
+        Alert.alert(err.message);
       });
   };
 
@@ -55,48 +45,82 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Go Vibe</Text>
-      <TextInput
-        autoCapitalize="none"
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Enter your email address"
-      />
-      <TextInput
-        autoCapitalize="none"
-        secureTextEntry={true}
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Enter your password"
-      />
-      <Button style={styles.button} title="Sign in" onPress={handleButton} />
-      <Button
-        title="Create an account"
-        onPress={() => navigation.navigate("SignUp")}
-      />
+      <View style={styles.container2}>
+        <Text style={styles.title}>Log in to Go Vibe</Text>
+        <TextInput
+          autoCapitalize="none"
+          style={styles.input}
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Enter your email address"
+          placeholderTextColor="#E8F0F2"
+        />
+        <TextInput
+          autoCapitalize="none"
+          secureTextEntry={true}
+          style={styles.input}
+          onChangeText={setPassword}
+          value={password}
+          placeholder="Enter your password"
+          placeholderTextColor="#E8F0F2"
+        />
+      </View>
+      <View>
+        <TouchableOpacity style={styles.button} onPress={handleButton}>
+          <Text style={styles.buttonText}>Sign in</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("SignUp")}
+        >
+          <Text style={styles.buttonText}>Create an account</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    width: 200,
+    borderColor: "#E8F0F2",
+    color: "#E8F0F2",
+    height: 50,
+    width: 280,
     margin: 12,
-    borderWidth: 1,
     padding: 10,
+    borderWidth: 2,
+    borderRadius: 10,
   },
   container: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "black",
+  },
+  container2: {
+    alignItems: "center",
+    marginBottom: 40,
+    marginTop: 40,
   },
   title: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
+    color: "#FFFFFF",
+  },
+  button: {
+    borderColor: "#E8F0F2",
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 8,
+    marginBottom: 20,
+    marginHorizontal: 48,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#E8F0F2",
+    fontSize: 20,
+    fontFamily: "Futura",
   },
 });
 
