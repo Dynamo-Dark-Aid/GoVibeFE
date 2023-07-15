@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
 import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
 
-
 const SingleActivity = () => {
   const dispatch = useDispatch();
   const route = useRoute();
@@ -25,6 +24,7 @@ const SingleActivity = () => {
   }, [dispatch]);
 
   console.log("activityItems", activityItems)
+
   const handleDirections = () => {
     if (activity && activity.address) {
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -96,7 +96,11 @@ const SingleActivity = () => {
             <Text style={styles.buttonText}>Remove from Favorites</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={handleAddToFavorites}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleAddToFavorites}
+          >
+
             <Text style={styles.buttonText}>Add to Favorites</Text>
           </TouchableOpacity>
         )}
@@ -113,15 +117,17 @@ const SingleActivity = () => {
     </View>
   );
 };
-const { height } = Dimensions.get('window');
+
+const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   imageContainer: {
-    width: '100%',
+    width: "100%",
+
     height: height / 3,
   },
   image: {
@@ -129,13 +135,17 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+
+    alignItems: "center",
+    justifyContent: "center",
+
     paddingHorizontal: 20,
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
+
+    fontWeight: "bold",
+
     marginBottom: 10,
   },
   address: {
@@ -149,18 +159,20 @@ const styles = StyleSheet.create({
   button: {
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: '#42A5F5',
+
+    backgroundColor: "#42A5F5",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 SingleActivity.navigationOptions = {
-  title: 'Activity Details',
+  title: "Activity Details",
 };
 export default SingleActivity;
+
