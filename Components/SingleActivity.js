@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
+import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
 
-const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
+
+const SingleActivity = () => {
+  const dispatch = useDispatch();
   const route = useRoute();
   const { activity } = route.params || {};
-  const [favorites, setFavorites] = useState([]);
-  const [itinerary, setItinerary] = useState([]);
-  const saveFavorites = async () => {
-    try {
-      await axios.post('https://govibeapi.onrender.com/favorites', favorites);
-    } catch (error) {
-      console.error('Error saving favorites:', error);
-    }
-  };
-  const saveItinerary = async () => {
-    try {
-      await axios.post('https://govibeapi.onrender.com/itineraries', itinerary);
-    } catch (error) {
-      console.error('Error saving itinerary:', error);
-    }
-  };
+  const activityItems = useSelector(state => state.activity.activityItems);
+  const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
+  const isActivityFavorite = activityItems.some(item => item.name === activity.name);
+  const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
+
+  useEffect(() => {
+    dispatch(getActivities());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("THIS IS ITINERARY", itineraryItems)
+    dispatch(displayItinerary());
+  }, [dispatch]);
+
+  console.log("activityItems", activityItems)
   const handleDirections = () => {
     if (activity && activity.address) {
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -30,33 +33,35 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
       Linking.openURL(mapsUrl);
     }
   };
+
   const handleAddToFavorites = () => {
-    addToFavorites(activity);
-    setFavorites(prevFavorites => [...prevFavorites, activity]);
+    const activityData = {
+      activity: {
+        name: activity.name,
+        location: activity.address
+      }
+    }
+    dispatch(addActivity(activityData));
   };
+
   const handleAddToItinerary = () => {
-    addToItinerary(activity);
-    setItinerary(prevItinerary => [...prevItinerary, activity]);
+    const itineraryData = {
+      itinerary: {
+        name: activity.name,
+        location: activity.address
+      }
+    }
+    dispatch(addToItinerary(itineraryData));
   };
+
   const handleRemoveFromFavorites = () => {
-    const updatedFavorites = favorites.filter(favorite => favorite.id !== activity.id);
-    setFavorites(updatedFavorites);
+    dispatch(removeActivity(activity));
   };
-  useEffect(() => {
-    if (favorites.length > 0) {
-      saveFavorites();
-    }
-  }, [favorites]);
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Activity Details',
-    });
-  }, []);
-  useEffect(() => {
-    if (itinerary.length > 0) {
-      saveItinerary();
-    }
-  }, [itinerary]);
+
+  const handleRemoveFromItinerary = () => {
+    dispatch(removeFromItinerary(activity));
+  }
+
   if (!activity) {
     return null;
   }
@@ -77,6 +82,7 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
           <Image source={imageSource} style={styles.image} resizeMode="cover" />
         </View>
       )}
+
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{activity.name}</Text>
         <Text style={styles.address}>{activity.address}</Text>
@@ -84,7 +90,8 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
         <TouchableOpacity style={styles.button} onPress={handleDirections}>
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
-        {favorites.some(favorite => favorite.id === activity.id) ? (
+
+        {isActivityFavorite ? (
           <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
             <Text style={styles.buttonText}>Remove from Favorites</Text>
           </TouchableOpacity>
@@ -93,9 +100,15 @@ const SingleActivity = ({ addToFavorites, addToItinerary, navigation }) => {
             <Text style={styles.buttonText}>Add to Favorites</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
-          <Text style={styles.buttonText}>Add to Itinerary</Text>
-        </TouchableOpacity>
+        {isActivityInItinerary ? (
+          <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
+            <Text style={styles.buttonText}>Remove from Itinerary</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
+            <Text style={styles.buttonText}>Add to Itinerary</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
