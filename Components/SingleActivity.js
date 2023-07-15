@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
+import { addActivity, getActivities, removeActivity, addToFavorites, removeFromFavorites } from './slices/activitySlice';
 import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
 
 const SingleActivity = () => {
@@ -38,10 +38,11 @@ const SingleActivity = () => {
     const activityData = {
       activity: {
         name: activity.name,
-        location: activity.address
+        location: activity.address,
+        image: activity.image,
       }
     }
-    dispatch(addActivity(activityData));
+    dispatch(addToFavorites(activityData)); // Changed from addActivity
   };
 
   const handleAddToItinerary = () => {
@@ -55,7 +56,7 @@ const SingleActivity = () => {
   };
 
   const handleRemoveFromFavorites = () => {
-    dispatch(removeActivity(activity));
+    dispatch(removeFromFavorites(activity)); // Changed from removeActivity
   };
 
   const handleRemoveFromItinerary = () => {
@@ -76,7 +77,7 @@ const SingleActivity = () => {
   }
   const imageSource = image ? { uri: image } : null;
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {imageSource && (
         <View style={styles.imageContainer}>
           <Image source={imageSource} style={styles.image} resizeMode="cover" />
@@ -114,20 +115,19 @@ const SingleActivity = () => {
           </TouchableOpacity>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   imageContainer: {
     width: "100%",
-
     height: height / 3,
   },
   image: {
@@ -135,17 +135,13 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 2,
-
     alignItems: "center",
     justifyContent: "center",
-
     paddingHorizontal: 20,
   },
   name: {
     fontSize: 24,
-
     fontWeight: "bold",
-
     marginBottom: 10,
   },
   address: {
@@ -159,7 +155,6 @@ const styles = StyleSheet.create({
   button: {
     marginBottom: 10,
     borderRadius: 8,
-
     backgroundColor: "#42A5F5",
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -175,4 +170,3 @@ SingleActivity.navigationOptions = {
   title: "Activity Details",
 };
 export default SingleActivity;
-

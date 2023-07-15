@@ -1,34 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { Picker } from '@react-native-picker/picker';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromFavorites } from './slices/activitySlice';
 
-const FavoritesPage = ({ favorites, removeFavorite }) => {
+const FavoritesPage = () => {
+  const dispatch = useDispatch();
+  const favoriteItems = useSelector(state => state.activity.favoriteItems);
+
   const [sortOrder, setSortOrder] = useState('asc');
-  const [sortedFavorites, setSortedFavorites] = useState(favorites || []);
-  const hasFavorites = sortedFavorites.length > 0;
+  const [sortedFavorites, setSortedFavorites] = useState(favoriteItems || []);
+  const hasFavorites = sortedFavorites && sortedFavorites.length > 0;
+
 
   const handleDelete = (item) => {
-    removeFavorite(item);
+    dispatch(removeFromFavorites(item));
   };
 
-
-  const loadFavorites = async () => {
-    try {
-      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
-      if (response.status === 200) {
-        const favoritesData = response.data;
-        setFavorites(favoritesData);
-      }
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    }
-  };
-  
   const handleSort = (value) => {
     setSortOrder(value);
 
-    const sorted = [...favorites];
+    const sorted = [...sortedFavorites]; 
 
     if (value === 'asc') {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -40,7 +32,7 @@ const FavoritesPage = ({ favorites, removeFavorite }) => {
   };
 
   const renderFavorite = ({ item }) => {
-    const { name, image, address } = item;
+    const { name, image, location } = item;
 
     const renderLeftActions = (progress, dragX) => {
       const scale = dragX.interpolate({
@@ -64,31 +56,23 @@ const FavoritesPage = ({ favorites, removeFavorite }) => {
           <Image source={{ uri: image }} style={styles.favoriteImage} />
           <View style={styles.favoriteDetails}>
             <Text style={styles.favoriteName}>{name}</Text>
-            <Text style={styles.favoriteAddress}>{address}</Text>
+            <Text style={styles.favoriteAddress}>{location}</Text>
           </View>
         </View>
       </Swipeable>
     );
   };
 
+  useEffect(() => {
+    setSortedFavorites(favoriteItems);
+  }, [favoriteItems]);
+
   return (
     <View style={styles.container}>
       {hasFavorites && (
-        <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
+        <TouchableOpacity style={styles.sortButton} onPress={() => handleSort(sortOrder === 'asc' ? 'desc' : 'asc')}>
           <Text style={styles.sortButtonText}>Sort</Text>
         </TouchableOpacity>
-      )}
-      {hasFavorites && isSortOpen && (
-        <View style={styles.sortContainer}>
-          <Picker
-            style={styles.sortPicker}
-            selectedValue={sortOrder}
-            onValueChange={(value) => handleSort(value)}
-          >
-            <Picker.Item label="A-Z" value="asc" />
-            <Picker.Item label="Z-A" value="desc" />
-          </Picker>
-        </View>
       )}
       {!hasFavorites && (
         <View style={styles.noFavoritesContainer}>
@@ -117,6 +101,9 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
+    borderColor: 'black', // Add this line
+    borderWidth: 1, // Add this line for 1 pixel black border, adjust as needed
+    borderRadius: 5, // Optional, if you want rounded corners
   },
   favoriteImage: {
     width: 50,
@@ -153,20 +140,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#007AFF',
-  },
-  sortContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sortLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  sortPicker: {
-    flex: 1,
-    height: 40,
   },
   noFavoritesContainer: {
     flex: 1,
