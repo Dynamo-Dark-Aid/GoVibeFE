@@ -55,7 +55,13 @@ export default function App() {
 
           <Stack.Screen name="Map" component={Map} />
           <Stack.Screen name="Attractions" component={Attractions} />
-          <Stack.Screen name="SingleActivity" component={SingleActivity} />
+          <Stack.Screen 
+          name="SingleActivity" 
+          component={SingleActivity}
+          options={{
+            headerTransparent: true,
+            headerTitle: "",
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
