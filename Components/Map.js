@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: 20,
-    fontFamily: "Futura",
+    fontFamily: "Futura-CondensedExtraBold",
   },
   map: {
     flex: 1
