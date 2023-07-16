@@ -11,19 +11,20 @@ const SingleActivity = () => {
   const { activity } = route.params || {};
   const activityItems = useSelector(state => state.activity.activityItems);
   const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
+  const isLoggedin = useSelector(state => state.auth.isLoggedin);
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
 
-  useEffect(() => {
-    dispatch(getActivities());
-  }, [dispatch]);
+  {if (isLoggedin) {
+    useEffect(() => {
+      dispatch(getActivities());
+    }, [dispatch]);
 
-  useEffect(() => {
-    console.log("THIS IS ITINERARY", itineraryItems)
-    dispatch(displayItinerary());
-  }, [dispatch]);
-
-  console.log("activityItems", activity)
+    useEffect(() => {
+      console.log("THIS IS ITINERARY", itineraryItems)
+      dispatch(displayItinerary());
+    }, [dispatch]);
+  }}
 
   const handleDirections = () => {
     if (activity && activity.address) {
@@ -80,45 +81,89 @@ const SingleActivity = () => {
   }
   const imageSource = image ? { uri: image } : null;
   return (
-    <View style={styles.container}>
-      {imageSource && (
-        <View style={styles.imageContainer}>
-          <Image source={imageSource} style={styles.image} resizeMode="cover" />
+    <>
+    {isLoggedin ? (
+      <View style={styles.container}>
+        {imageSource && (
+          <View style={styles.imageContainer}>
+            <Image source={imageSource} style={styles.image} resizeMode="cover" />
+          </View>
+        )}
+
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>{activity.name}</Text>
+          <Text style={styles.address}>{activity.address}</Text>
+          <Text style={styles.description}>{activity.description}</Text>
+          <TouchableOpacity style={styles.button} onPress={handleDirections}>
+            <Text style={styles.buttonText}>Directions</Text>
+          </TouchableOpacity>
+
+          {isActivityFavorite ? (
+            <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
+              <Text style={styles.buttonText}>Remove from Favorites</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleAddToFavorites}
+            >
+
+              <Text style={styles.buttonText}>Add to Favorites</Text>
+            </TouchableOpacity>
+          )}
+          {isActivityInItinerary ? (
+            <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
+              <Text style={styles.buttonText}>Remove from Itinerary</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
+              <Text style={styles.buttonText}>Add to Itinerary</Text>
+            </TouchableOpacity>
+          )}
         </View>
-      )}
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{activity.name}</Text>
-        <Text style={styles.address}>{activity.address}</Text>
-        <Text style={styles.description}>{activity.description}</Text>
-        <TouchableOpacity style={styles.button} onPress={handleDirections}>
-          <Text style={styles.buttonText}>Directions</Text>
-        </TouchableOpacity>
-
-        {isActivityFavorite ? (
-          <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
-            <Text style={styles.buttonText}>Remove from Favorites</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleAddToFavorites}
-          >
-
-            <Text style={styles.buttonText}>Add to Favorites</Text>
-          </TouchableOpacity>
-        )}
-        {isActivityInItinerary ? (
-          <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
-            <Text style={styles.buttonText}>Remove from Itinerary</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
-            <Text style={styles.buttonText}>Add to Itinerary</Text>
-          </TouchableOpacity>
-        )}
       </View>
-    </View>
+      ) : (
+        <View style={styles.container}>
+        {imageSource && (
+          <View style={styles.imageContainer}>
+            <Image source={imageSource} style={styles.image} resizeMode="cover" />
+          </View>
+        )}
+
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>{activity.name}</Text>
+          <Text style={styles.address}>{activity.address}</Text>
+          <Text style={styles.description}>{activity.description}</Text>
+          <TouchableOpacity style={styles.button} onPress={handleDirections}>
+            <Text style={styles.buttonText}>Directions</Text>
+          </TouchableOpacity>
+
+          {isActivityFavorite ? (
+            <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
+              <Text style={styles.buttonText}>Remove from Favorites</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => alert('You must be logged in to add to favorites.')}
+            >
+
+              <Text style={styles.buttonText}>Add to Favorites</Text>
+            </TouchableOpacity>
+          )}
+          {isActivityInItinerary ? (
+            <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
+              <Text style={styles.buttonText}>Remove from Itinerary</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={() => alert('You must be logged in to add to itinerary.')}>
+              <Text style={styles.buttonText}>Add to Itinerary</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+        )}
+    </>
   );
 };
 
