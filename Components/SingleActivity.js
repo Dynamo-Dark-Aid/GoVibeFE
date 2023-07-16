@@ -40,7 +40,6 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        category: activity.category.name,
         image: activity.photo.images.large.url
       }
     }
@@ -53,8 +52,7 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        image: activity.photo.images.large.url,
-        category: activity.category.name
+        image: activity.photo.images.large.url
       }
     }
     dispatch(addToItinerary(itineraryData));
