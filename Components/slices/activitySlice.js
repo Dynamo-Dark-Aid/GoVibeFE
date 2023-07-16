@@ -77,31 +77,25 @@ export const addToFavorites = createAsyncThunk('activity/addToFavorites', async 
   });
 
 const activitySlice = createSlice({
-  name: 'activity',
-  initialState: {
-    activityItems: [],
-    favoriteItems: [], 
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(getActivities.fulfilled, (state, action) => {
-      state.activityItems = action.payload;
-    });
-    builder.addCase(addActivity.fulfilled, (state, action) => {
-      state.activityItems.push(action.payload);
-    });
-    builder.addCase(removeActivity.fulfilled, (state, action) => {
-      const { id } = action.payload;
-      state.activityItems = state.activityItems.filter(item => item.id !== id);
-    });
-    builder.addCase(addToFavorites.fulfilled, (state, action) => {
-        state.favoriteItems.push(action.payload);
-      });
-      builder.addCase(removeFromFavorites.fulfilled, (state, action) => {
-        const { id } = action.payload;
-        state.favoriteItems = state.favoriteItems.filter(item => item.id !== id);
-      });
-  },
-});
+    name: 'activity',
+    initialState: {
+        activityItems: [],
+    },
+    reducers: {
+        
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getActivities.fulfilled, (state, action) => {
+            state.activityItems = action.payload;
+        }),
+        builder.addCase(addActivity.fulfilled, (state, action) => {
+            state.activityItems.push(action.payload);
+        }),
+        builder.addCase(removeActivity.fulfilled, (state, action) => {
+            const { id } = action.payload;
+            state.activityItems = state.activityItems.filter(item => item.id !== id);
+        })
+    }
+})
 
 export default activitySlice.reducer;

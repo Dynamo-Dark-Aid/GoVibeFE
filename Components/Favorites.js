@@ -2,64 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromFavorites } from './slices/activitySlice';
+import { removeActivity, getActivities } from './slices/activitySlice';
 
 const FavoritesPage = () => {
   const dispatch = useDispatch();
-  const favoriteItems = useSelector(state => state.activity.favoriteItems);
+  // const [sortOrder, setSortOrder] = useState('asc');
+  // const [sortedFavorites, setSortedFavorites] = useState(favoriteItems || []);
+  // const hasFavorites = sortedFavorites && sortedFavorites.length > 0;
+  const activityItems = useSelector(state => state.activity.activityItems);
 
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [sortedFavorites, setSortedFavorites] = useState(favoriteItems || []);
-  const hasFavorites = sortedFavorites && sortedFavorites.length > 0;
+  useEffect(() => {
+    dispatch(getActivities());
+  }, [dispatch])
 
+  console.log("THIS FIRED", activityItems)
 
   const handleDelete = (item) => {
-    dispatch(removeFromFavorites(item));
+    dispatch(removeActivity(item));
   };
 
-  const handleSort = (value) => {
-    setSortOrder(value);
+  // const handleSort = (value) => {
+  //   setSortOrder(value);
 
-    const sorted = [...sortedFavorites]; 
+  //   const sorted = [...sortedFavorites]; 
 
-    if (value === 'asc') {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
-    }
+  //   if (value === 'asc') {
+  //     sorted.sort((a, b) => a.name.localeCompare(b.name));
+  //   } else {
+  //     sorted.sort((a, b) => b.name.localeCompare(a.name));
+  //   }
 
-    setSortedFavorites(sorted);
-  };
+  //   setSortedFavorites(sorted);
+  // };
 
-  const renderFavorite = ({ item }) => {
-    const { name, image, location } = item;
-
-    const renderLeftActions = (progress, dragX) => {
-      const scale = dragX.interpolate({
-        inputRange: [0, 100],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-      });
-
-      return (
-        <View style={styles.leftActions}>
-          <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
-            Delete
-          </Animated.Text>
-        </View>
-      );
-    };
+  const renderLeftActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
 
     return (
-      <Swipeable renderLeftActions={renderLeftActions} onSwipeableLeftOpen={() => handleDelete(item)}>
-        <View style={styles.favoriteContainer}>
-          <Image source={{ uri: image }} style={styles.favoriteImage} />
-          <View style={styles.favoriteDetails}>
-            <Text style={styles.favoriteName}>{name}</Text>
-            <Text style={styles.favoriteAddress}>{location}</Text>
-          </View>
-        </View>
-      </Swipeable>
+      <View style={styles.leftActions}>
+        <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
+          Delete
+        </Animated.Text>
+      </View>
     );
   };
 
@@ -68,27 +56,33 @@ const FavoritesPage = () => {
   }, [favoriteItems]);
 
   return (
-    <View style={styles.container}>
-      {hasFavorites && (
-        <TouchableOpacity style={styles.sortButton} onPress={() => handleSort(sortOrder === 'asc' ? 'desc' : 'asc')}>
-          <Text style={styles.sortButtonText}>Sort</Text>
-        </TouchableOpacity>
-      )}
-      {!hasFavorites && (
+    <>
+      {activityItems.length > 0 ? (
+        activityItems.map((item, index) => (
+          <Swipeable
+            key={index}
+            renderLeftActions={renderLeftActions}
+            onSwipeableLeftOpen={() => handleDelete(item)}
+          >
+            <View style={styles.favoriteContainer}>
+              <Image source={{ uri: item.image }} style={styles.favoriteImage} />
+              <View style={styles.favoriteDetails}>
+                <Text style={styles.favoriteName}>{item.name}</Text>
+                <Text style={styles.favoriteAddress}>{item.location}</Text>
+                <Text style={styles.favoriteAddress}>{item.description}</Text>
+              </View>
+            </View>
+          </Swipeable>
+        ))
+      ) : (
         <View style={styles.noFavoritesContainer}>
           <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
         </View>
       )}
-      {hasFavorites && (
-        <FlatList
-          data={sortedFavorites}
-          renderItem={renderFavorite}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      )}
-    </View>
+    </>
   );
-};
+  
+}
 
 const styles = StyleSheet.create({
   container: {

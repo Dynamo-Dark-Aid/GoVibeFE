@@ -19,6 +19,23 @@ export const displayItinerary = createAsyncThunk('itinerary/displayItinerary', a
     }
 })
 
+export const displayArchivedItinerary = createAsyncThunk('itinerary/displayArchivedItinerary', async (_, { getState }) => {
+    try {
+        const { auth } = getState()
+        const { userToken } = auth
+
+        const response = await axios.get('https://govibeapi.onrender.com/archived-itineraries', {
+            headers: {
+                authorization: userToken
+            }
+          });
+
+        return response.data;
+    } catch (error) {
+        Alert.alert('Error displaying itinerary:', error);
+    }
+})
+
 export const addToItinerary = createAsyncThunk('itinerary/addToItinerary', async (itinerary, { getState }) => {
     try {
         const { auth } = getState()
@@ -70,12 +87,15 @@ const itinerarySlice = createSlice({
         builder.addCase(displayItinerary.fulfilled, (state, action) => {
             state.itineraryItems = action.payload;
         }),
+        builder.addCase(displayArchivedItinerary.fulfilled, (state, action) => {
+            state.itineraryItems = action.payload;
+        }),
         builder.addCase(addToItinerary.fulfilled, (state, action) => {
             state.itineraryItems.push(action.payload);
         }),
         builder.addCase(removeFromItinerary.fulfilled, (state, action) => {
             const { id } = action.payload;
-            state.itineraryItems = state.itineraryItems.filter(item => item.id === id);
+            state.itineraryItems = state.itineraryItems.filter(item => item.id !== id);
         })
     }
 })

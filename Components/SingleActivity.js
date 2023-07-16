@@ -23,7 +23,7 @@ const SingleActivity = () => {
     dispatch(displayItinerary());
   }, [dispatch]);
 
-  console.log("activityItems", activityItems)
+  console.log("activityItems", activity)
 
   const handleDirections = () => {
     if (activity && activity.address) {
@@ -39,7 +39,8 @@ const SingleActivity = () => {
       activity: {
         name: activity.name,
         location: activity.address,
-        image: activity.image,
+        description: activity.description,
+        image: activity.photo.images.large.url
       }
     }
     dispatch(addToFavorites(activityData)); // Changed from addActivity
@@ -49,7 +50,9 @@ const SingleActivity = () => {
     const itineraryData = {
       itinerary: {
         name: activity.name,
-        location: activity.address
+        location: activity.address,
+        description: activity.description,
+        image: activity.photo.images.large.url
       }
     }
     dispatch(addToItinerary(itineraryData));

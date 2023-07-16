@@ -1,1 +1,1 @@
-export const api_key = "d6f8af5c81msh29b15a40494df92p1e3122jsnb65806b02ae6"
+export const api_key = "5c94a0aed5mshb9d0641c206b6d3p1f20fajsn9f3d24d14963"
