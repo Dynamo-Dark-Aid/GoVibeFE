@@ -84,7 +84,7 @@ const SingleActivity = () => {
   const imageSource = image ? { uri: image } : null;
   return (
     <>
-      {isLoggedin ? (
+      {isLoggedIn ? (
         <View style={styles.container}>
           {imageSource && (
             <View style={styles.imageContainer}>
