@@ -14,22 +14,19 @@ const SingleActivity = () => {
   const { activity } = route.params || {};
   const activityItems = useSelector(state => state.activity.activityItems);
   const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
-  const isLoggedin = useSelector(state => state.auth.isLoggedIn);
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
 
-  {
-    if (isLoggedin) {
-      useEffect(() => {
-        dispatch(getActivities());
-      }, [dispatch]);
+  {if (isLoggedIn) {
+    useEffect(() => {
+      dispatch(getActivities());
+    }, [dispatch]);
 
-      useEffect(() => {
-        console.log("THIS IS ITINERARY", itineraryItems)
-        dispatch(displayItinerary());
-      }, [dispatch]);
-    }
-  }
+    useEffect(() => {
+      dispatch(displayItinerary());
+    }, [dispatch]);
+  }}
 
   const handleDirections = () => {
     if (activity && activity.address) {

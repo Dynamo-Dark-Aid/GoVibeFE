@@ -53,6 +53,24 @@ export const addToItinerary = createAsyncThunk('itinerary/addToItinerary', async
     }
 })
 
+export const archiveItinerary = createAsyncThunk('itinerary/archiveItinerary', async (itinerary, { getState }) => {
+    try {
+        const { auth, itinerary: {itineraryItems} } = getState()
+        const { userToken } = auth
+        const userItinerary = itineraryItems.find(item => item.name === itinerary.name);
+
+        const response = await axios.post(`https://govibeapi.onrender.com/archive-itinerary/${userItinerary.id}`, itinerary, {
+            headers: {
+                authorization: userToken
+            }
+          });
+
+        return response.data;
+    } catch (error) {
+        Alert.alert('Error archiving itinerary:', error);
+    }
+})
+
 export const removeFromItinerary = createAsyncThunk('itinerary/removeFromItinerary', async (itinerary, { getState }) => {
     try {
         const { auth, itinerary: {itineraryItems} } = getState()
