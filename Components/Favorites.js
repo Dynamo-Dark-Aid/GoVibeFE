@@ -1,97 +1,84 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { Picker } from '@react-native-picker/picker';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeActivity, getActivities } from './slices/activitySlice';
 
-const FavoritesPage = ({ favorites, removeFavorite }) => {
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [sortedFavorites, setSortedFavorites] = useState(favorites || []);
-  const hasFavorites = sortedFavorites.length > 0;
+const FavoritesPage = () => {
+  const dispatch = useDispatch();
+  // const [sortOrder, setSortOrder] = useState('asc');
+  // const [sortedFavorites, setSortedFavorites] = useState(favoriteItems || []);
+  // const hasFavorites = sortedFavorites && sortedFavorites.length > 0;
+  const activityItems = useSelector(state => state.activity.activityItems);
+
+  useEffect(() => {
+    dispatch(getActivities());
+  }, [dispatch])
+
+  console.log("THIS FIRED", activityItems)
 
   const handleDelete = (item) => {
-    removeFavorite(item);
+    dispatch(removeActivity(item));
   };
 
-  const handleSort = (value) => {
-    setSortOrder(value);
+  // const handleSort = (value) => {
+  //   setSortOrder(value);
 
-    const sorted = [...favorites];
+  //   const sorted = [...sortedFavorites]; 
 
-    if (value === 'asc') {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
-    }
+  //   if (value === 'asc') {
+  //     sorted.sort((a, b) => a.name.localeCompare(b.name));
+  //   } else {
+  //     sorted.sort((a, b) => b.name.localeCompare(a.name));
+  //   }
 
-    setSortedFavorites(sorted);
-  };
+  //   setSortedFavorites(sorted);
+  // };
 
-  const renderFavorite = ({ item }) => {
-    const { name, image, address } = item;
-
-    const renderLeftActions = (progress, dragX) => {
-      const scale = dragX.interpolate({
-        inputRange: [0, 100],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-      });
-
-      return (
-        <View style={styles.leftActions}>
-          <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
-            Delete
-          </Animated.Text>
-        </View>
-      );
-    };
+  const renderLeftActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
 
     return (
-      <Swipeable renderLeftActions={renderLeftActions} onSwipeableLeftOpen={() => handleDelete(item)}>
-        <View style={styles.favoriteContainer}>
-          <Image source={{ uri: image }} style={styles.favoriteImage} />
-          <View style={styles.favoriteDetails}>
-            <Text style={styles.favoriteName}>{name}</Text>
-            <Text style={styles.favoriteAddress}>{address}</Text>
-          </View>
-        </View>
-      </Swipeable>
+      <View style={styles.leftActions}>
+        <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
+          Delete
+        </Animated.Text>
+      </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      {hasFavorites && (
-        <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-          <Text style={styles.sortButtonText}>Sort</Text>
-        </TouchableOpacity>
-      )}
-      {hasFavorites && isSortOpen && (
-        <View style={styles.sortContainer}>
-          <Picker
-            style={styles.sortPicker}
-            selectedValue={sortOrder}
-            onValueChange={(value) => handleSort(value)}
+    <>
+      {activityItems.length > 0 ? (
+        activityItems.map((item, index) => (
+          <Swipeable
+            key={index}
+            renderLeftActions={renderLeftActions}
+            onSwipeableLeftOpen={() => handleDelete(item)}
           >
-            <Picker.Item label="A-Z" value="asc" />
-            <Picker.Item label="Z-A" value="desc" />
-          </Picker>
-        </View>
-      )}
-      {!hasFavorites && (
+            <View style={styles.favoriteContainer}>
+              <Image source={{ uri: item.image }} style={styles.favoriteImage} />
+              <View style={styles.favoriteDetails}>
+                <Text style={styles.favoriteName}>{item.name}</Text>
+                <Text style={styles.favoriteAddress}>{item.location}</Text>
+                <Text style={styles.favoriteAddress}>{item.description}</Text>
+              </View>
+            </View>
+          </Swipeable>
+        ))
+      ) : (
         <View style={styles.noFavoritesContainer}>
           <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
         </View>
       )}
-      {hasFavorites && (
-        <FlatList
-          data={sortedFavorites}
-          renderItem={renderFavorite}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      )}
-    </View>
+    </>
   );
-};
+  
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -104,6 +91,9 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
+    borderColor: 'black', // Add this line
+    borderWidth: 1, // Add this line for 1 pixel black border, adjust as needed
+    borderRadius: 5, // Optional, if you want rounded corners
   },
   favoriteImage: {
     width: 50,
@@ -140,20 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#007AFF',
-  },
-  sortContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sortLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  sortPicker: {
-    flex: 1,
-    height: 40,
   },
   noFavoritesContainer: {
     flex: 1,
