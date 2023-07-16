@@ -70,6 +70,7 @@ const FavoritesPage = () => {
                 <Text style={styles.favoriteName}>{item.name}</Text>
                 {/* <Text style={styles.favoriteAddress}>{item.location}</Text> */}
                 {/* <Text style={styles.favoriteAddress}>{item.description}</Text> */}
+                {/* <Text>Adding this to commit changes</Text> */}
               </View>
             </View>
           </Swipeable>
