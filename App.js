@@ -29,10 +29,7 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{
-              headerTransparent: true,
-              headerTitle: "",
-            }}
+            options={{ headerShown: false }}
           />
 
 

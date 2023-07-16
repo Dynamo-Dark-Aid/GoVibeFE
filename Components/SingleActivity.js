@@ -14,20 +14,22 @@ const SingleActivity = () => {
   const { activity } = route.params || {};
   const activityItems = useSelector(state => state.activity.activityItems);
   const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
-  const isLoggedin = useSelector(state => state.auth.isLoggedin);
+  const isLoggedin = useSelector(state => state.auth.isLoggedIn);
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
 
-  {if (isLoggedin) {
-    useEffect(() => {
-      dispatch(getActivities());
-    }, [dispatch]);
+  {
+    if (isLoggedin) {
+      useEffect(() => {
+        dispatch(getActivities());
+      }, [dispatch]);
 
-    useEffect(() => {
-      console.log("THIS IS ITINERARY", itineraryItems)
-      dispatch(displayItinerary());
-    }, [dispatch]);
-  }}
+      useEffect(() => {
+        console.log("THIS IS ITINERARY", itineraryItems)
+        dispatch(displayItinerary());
+      }, [dispatch]);
+    }
+  }
 
   const handleDirections = () => {
     if (activity && activity.address) {
@@ -85,89 +87,141 @@ const SingleActivity = () => {
   const imageSource = image ? { uri: image } : null;
   return (
     <>
-    {isLoggedin ? (
-      <View style={styles.container}>
-        {imageSource && (
-          <View style={styles.imageContainer}>
-            <Image source={imageSource} style={styles.image} resizeMode="cover" />
-          </View>
-        )}
-
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{activity.name}</Text>
-          <Text style={styles.address}>{activity.address}</Text>
-          <Text style={styles.description}>{activity.description}</Text>
-          <TouchableOpacity style={styles.button} onPress={handleDirections}>
-            <Text style={styles.buttonText}>Directions</Text>
-          </TouchableOpacity>
-
-          {isActivityFavorite ? (
-            <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
-              <Text style={styles.buttonText}>Remove from Favorites</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleAddToFavorites}
-            >
-
-              <Text style={styles.buttonText}>Add to Favorites</Text>
-            </TouchableOpacity>
-          )}
-          {isActivityInItinerary ? (
-            <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
-              <Text style={styles.buttonText}>Remove from Itinerary</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={handleAddToItinerary}>
-              <Text style={styles.buttonText}>Add to Itinerary</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-      ) : (
+      {isLoggedin ? (
         <View style={styles.container}>
-        {imageSource && (
-          <View style={styles.imageContainer}>
-            <Image source={imageSource} style={styles.image} resizeMode="cover" />
+          {imageSource && (
+            <View style={styles.imageContainer}>
+              <Image source={imageSource} style={styles.image} resizeMode="cover" />
+            </View>
+          )}
+          <View style={styles.infoContainer}>
+            <View style={styles.headerContainer}>
+              <View style={styles.nameContainer}>
+                <Text style={styles.name}>{activity.name}</Text>
+              </View>
+              <View style={styles.iconContainer}>
+
+                {isActivityFavorite ? (
+                  <TouchableOpacity onPress={handleRemoveFromFavorites}>
+                    <MaterialCommunityIcons
+                      name="heart"
+                      size={24}
+                    // paddingLeft = {24}
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={handleAddToFavorites}
+                  >
+
+                    <MaterialCommunityIcons
+                      name="heart-outline"
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                )}
+                {isActivityInItinerary ? (
+                  <TouchableOpacity onPress={handleRemoveFromItinerary}>
+                    <MaterialCommunityIcons
+                      name="minus"
+                      size={24}
+                      paddingLeft={8}
+
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={handleAddToItinerary}>
+                    <MaterialCommunityIcons
+                      name="plus"
+                      size={24}
+                      paddingLeft={8}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+            <View style={styles.addressContainer}>
+              <Text style={styles.address}>{activity.address}</Text>
+            </View>
+            <ScrollView style={styles.scrollBox}>
+              <Text style={styles.description}>{activity.description}</Text>
+            </ScrollView>
+
+            <TouchableOpacity style={styles.button} onPress={handleDirections}>
+              <Text style={styles.buttonText}>Directions</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )
+        : (
+          <View style={styles.container}>
+            {imageSource && (
+              <View style={styles.imageContainer}>
+                <Image source={imageSource} style={styles.image} resizeMode="cover" />
+              </View>
+            )}
+
+            <View style={styles.infoContainer}>
+              <View style={styles.headerContainer}>
+                <View style={styles.nameContainer}>
+                  <Text style={styles.name}>{activity.name}</Text>
+                </View>
+                <View style={styles.iconContainer}>
+
+                  {isActivityFavorite ? (
+                    <TouchableOpacity onPress={handleRemoveFromFavorites}>
+                      <MaterialCommunityIcons
+                        name="heart"
+                        size={24}
+                      // paddingLeft = {24}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => alert('You must be logged in to add to favorites.')}
+                    >
+
+                      <MaterialCommunityIcons
+                        name="heart-outline"
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  {isActivityInItinerary ? (
+                    <TouchableOpacity onPress={handleRemoveFromItinerary}>
+                      <MaterialCommunityIcons
+                        name="minus"
+                        size={24}
+                        paddingLeft={8}
+
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => alert('You must be logged in to add to itinerary.')}>
+                      <MaterialCommunityIcons
+                        name="plus"
+                        size={24}
+                        paddingLeft={8}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+              <View style={styles.addressContainer}>
+                <Text style={styles.address}>{activity.address}</Text>
+              </View>
+              <ScrollView style={styles.scrollBox}>
+                <Text style={styles.description}>{activity.description}</Text>
+              </ScrollView>
+              <TouchableOpacity style={styles.button} onPress={handleDirections}>
+                <Text style={styles.buttonText}>Directions</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{activity.name}</Text>
-          <Text style={styles.address}>{activity.address}</Text>
-          <Text style={styles.description}>{activity.description}</Text>
-          <TouchableOpacity style={styles.button} onPress={handleDirections}>
-            <Text style={styles.buttonText}>Directions</Text>
-          </TouchableOpacity>
-
-          {isActivityFavorite ? (
-            <TouchableOpacity style={styles.button} onPress={handleRemoveFromFavorites}>
-              <Text style={styles.buttonText}>Remove from Favorites</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => alert('You must be logged in to add to favorites.')}
-            >
-
-              <Text style={styles.buttonText}>Add to Favorites</Text>
-            </TouchableOpacity>
-          )}
-          {isActivityInItinerary ? (
-            <TouchableOpacity style={styles.button} onPress={handleRemoveFromItinerary}>
-              <Text style={styles.buttonText}>Remove from Itinerary</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={() => alert('You must be logged in to add to itinerary.')}>
-              <Text style={styles.buttonText}>Add to Itinerary</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-        )}
     </>
-  );
+  )
 };
 
 const { height } = Dimensions.get("window");
@@ -250,4 +304,3 @@ SingleActivity.navigationOptions = {
   title: "Activity Details",
 };
 export default SingleActivity;
-
