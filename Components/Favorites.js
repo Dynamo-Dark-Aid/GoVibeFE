@@ -37,6 +37,9 @@ const FavoritesPage = () => {
 
   return (
     <>
+      <View>
+        <Text>Favorites</Text>
+      </View>
       {activityItems.length > 0 ? (
         activityItems.map((item, index) => (
           <Swipeable
@@ -61,7 +64,7 @@ const FavoritesPage = () => {
       )}
     </>
   );
-  
+
 }
 
 const styles = StyleSheet.create({

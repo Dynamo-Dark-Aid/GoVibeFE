@@ -20,8 +20,6 @@ function Home() {
                     border: "none",
                     paddingBottom: 8,
                     paddingTop: 8,
-                    // borderRadius: 30,
-                    // margin: 4,
                 },
                 tabBarActiveTintColor: "#86B6FF",
                 tabBarInactiveTintColor: "white",
