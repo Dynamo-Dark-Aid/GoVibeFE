@@ -11,17 +11,16 @@ const SingleActivity = () => {
   const { activity } = route.params || {};
   const activityItems = useSelector(state => state.activity.activityItems);
   const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
-  const isLoggedin = useSelector(state => state.auth.isLoggedin);
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
 
-  {if (isLoggedin) {
+  {if (isLoggedIn) {
     useEffect(() => {
       dispatch(getActivities());
     }, [dispatch]);
 
     useEffect(() => {
-      console.log("THIS IS ITINERARY", itineraryItems)
       dispatch(displayItinerary());
     }, [dispatch]);
   }}
@@ -82,7 +81,7 @@ const SingleActivity = () => {
   const imageSource = image ? { uri: image } : null;
   return (
     <>
-    {isLoggedin ? (
+    {isLoggedIn ? (
       <View style={styles.container}>
         {imageSource && (
           <View style={styles.imageContainer}>
