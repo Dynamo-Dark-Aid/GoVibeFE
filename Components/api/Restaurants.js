@@ -10,7 +10,7 @@ export const getRestaurantData = async (boundary) => {
         tr_latitude: `${boundary.latitude + boundary.latitudeDelta / 2}`,
         bl_longitude: `${boundary.longitude - boundary.longitudeDelta / 2}`,
         tr_longitude: `${boundary.longitude + boundary.longitudeDelta / 2}`,
-        limit: "5",
+        limit: "3",
         lang: "en_US",
       },
       headers: {
