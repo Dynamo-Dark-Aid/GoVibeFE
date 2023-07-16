@@ -75,7 +75,7 @@ const activitySlice = createSlice({
         }),
         builder.addCase(removeActivity.fulfilled, (state, action) => {
             const { id } = action.payload;
-            state.activityItems = state.activityItems.filter(item => item.id === id);
+            state.activityItems = state.activityItems.filter(item => item.id !== id);
         })
     }
 })

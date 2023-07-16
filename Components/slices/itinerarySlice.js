@@ -95,7 +95,7 @@ const itinerarySlice = createSlice({
         }),
         builder.addCase(removeFromItinerary.fulfilled, (state, action) => {
             const { id } = action.payload;
-            state.itineraryItems = state.itineraryItems.filter(item => item.id === id);
+            state.itineraryItems = state.itineraryItems.filter(item => item.id !== id);
         })
     }
 })
