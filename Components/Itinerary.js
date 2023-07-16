@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { useSelector, useDispatch } from 'react-redux';
+import { displayItinerary, displayArchivedItinerary, removeFromItinerary } from './slices/itinerarySlice';
 
-const Itinerary = ({ itinerary, removeActivity }) => {
+const Itinerary = () => {
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(displayItinerary());
+    }
+  }, [dispatch, isLoggedIn]);
+
   const handleDelete = (item) => {
-    removeActivity(item);
+    dispatch(removeFromItinerary(item));
   };
 
   const handleShare = () => {
@@ -27,74 +39,59 @@ const Itinerary = ({ itinerary, removeActivity }) => {
         console.log(error);
       });
   };
-  
-  const loadItinerary = async () => {
-    try {
-      const response = await axios.get('https://govibeapi.onrender.com/add-activity');
-      if (response.status === 200) {
-        const itineraryData = response.data;
-        setItinerary(itineraryData);
-      }
-    } catch (error) {
-      console.error('Error loading itinerary:', error);
-    }
-  };
-  const renderActivity = ({ item }) => {
-    const { name, image, address } = item;
 
-    const renderRightActions = (progress, dragX) => {
-      const scale = dragX.interpolate({
-        inputRange: [-100, 0],
-        outputRange: [1, 0],
-        extrapolate: 'clamp',
-      });
-
-      return (
-        <TouchableOpacity style={styles.completeContainer}>
-          <Animated.Text style={[styles.completeText, { transform: [{ scale }] }]}>
-            Complete
-          </Animated.Text>
-        </TouchableOpacity>
-      );
-    };
-
-    const renderLeftActions = (progress, dragX) => {
-      const scale = dragX.interpolate({
-        inputRange: [0, 100],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-      });
-
-      return (
-        <TouchableOpacity style={styles.deleteContainer} onPress={() => handleDelete(item)}>
-          <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
-            Delete
-          </Animated.Text>
-        </TouchableOpacity>
-      );
-    };
+  const renderRightActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
 
     return (
-      <Swipeable renderRightActions={renderRightActions} renderLeftActions={renderLeftActions}>
-        <View style={styles.activityContainer}>
-          <Image source={{ uri: image }} style={styles.activityImage} />
-          <View style={styles.activityDetails}>
-            <Text style={styles.activityName}>{name}</Text>
-            <Text style={styles.activityAddress}>{address}</Text>
-          </View>
-        </View>
-      </Swipeable>
+      <TouchableOpacity style={styles.completeContainer}>
+        <Animated.Text style={[styles.completeText, { transform: [{ scale }] }]}>
+          Complete
+        </Animated.Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderLeftActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View style={styles.leftActions}>
+        <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
+          Delete
+        </Animated.Text>
+      </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      {itinerary && itinerary.length > 0 ? (
-        <FlatList
-          data={itinerary}
-          renderItem={renderActivity}
-          keyExtractor={(item) => item.id.toString()}
-        />
+    <>
+      {itineraryItems.length > 0 && isLoggedIn ? (
+        itineraryItems.map((item, index) => (
+          <Swipeable 
+            key={index}
+            renderRightActions={renderRightActions} 
+            renderLeftActions={renderLeftActions}
+            onSwipeableLeftOpen={() => handleDelete(item)}
+          >
+            <View style={styles.activityContainer}>
+              <Image source={{ uri: item.image }} style={styles.activityImage} />
+              <View style={styles.activityDetails}>
+                <Text style={styles.activityName}>{item.name}</Text>
+                <Text style={styles.activityAddress}>{item.location}</Text>
+                <Text style={styles.activityAddress}>{item.description}</Text>
+              </View>
+            </View>
+          </Swipeable>
+        ))
       ) : (
         <View style={styles.noVibeContainer}>
           <Text style={styles.noVibeText}>No Vibe Created</Text>
@@ -103,8 +100,8 @@ const Itinerary = ({ itinerary, removeActivity }) => {
       <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
         <Text style={styles.shareButtonText}>Share Vibe</Text>
       </TouchableOpacity>
-    </View>
-  );
+    </>
+  )
 };
 
 const styles = StyleSheet.create({
@@ -119,6 +116,12 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
+  },
+  leftActions: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 20,
+    backgroundColor: '#FF0000',
   },
   activityImage: {
     width: 50,
@@ -184,3 +187,4 @@ const styles = StyleSheet.create({
 });
 
 export default Itinerary;
+

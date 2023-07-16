@@ -14,7 +14,7 @@ export const getTrailsData = async (lat, long) => {
                 'q-activities_activity_type_name_eq': 'hiking'
             },
             headers: {
-                'X-RapidAPI-Key': api_key,
+                'X-RapidAPI-Key': 'd6f8af5c81msh29b15a40494df92p1e3122jsnb65806b02ae6',
                 'X-RapidAPI-Host': 'trailapi-trailapi.p.rapidapi.com'
             }
         });

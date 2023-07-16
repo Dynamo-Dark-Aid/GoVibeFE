@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Image, View, Text, Dimensions, TouchableOpacity } from "react-native";
 
 export default function Restaurants({ restaurant, navigation }) {
-  console.log(restaurant)
+  // console.log(restaurant)
   return (
     <TouchableOpacity onPress={() => navigation.navigate("SingleActivity", { activity: restaurant })}>
       <View style={styles.cardContainer}>

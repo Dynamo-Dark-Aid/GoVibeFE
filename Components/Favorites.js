@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,34 +6,18 @@ import { removeActivity, getActivities } from './slices/activitySlice';
 
 const FavoritesPage = () => {
   const dispatch = useDispatch();
-  // const [sortOrder, setSortOrder] = useState('asc');
-  // const [sortedFavorites, setSortedFavorites] = useState(favoriteItems || []);
-  // const hasFavorites = sortedFavorites && sortedFavorites.length > 0;
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const activityItems = useSelector(state => state.activity.activityItems);
-
+  
   useEffect(() => {
-    dispatch(getActivities());
-  }, [dispatch])
-
-  console.log("THIS FIRED", activityItems)
+    if (isLoggedIn) {
+      dispatch(getActivities());
+    }
+  }, [dispatch, isLoggedIn]);
 
   const handleDelete = (item) => {
     dispatch(removeActivity(item));
   };
-
-  // const handleSort = (value) => {
-  //   setSortOrder(value);
-
-  //   const sorted = [...sortedFavorites]; 
-
-  //   if (value === 'asc') {
-  //     sorted.sort((a, b) => a.name.localeCompare(b.name));
-  //   } else {
-  //     sorted.sort((a, b) => b.name.localeCompare(a.name));
-  //   }
-
-  //   setSortedFavorites(sorted);
-  // };
 
   const renderLeftActions = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -57,6 +41,9 @@ const FavoritesPage = () => {
 
   return (
     <>
+      <View>
+        <Text>Favorites</Text>
+      </View>
       {activityItems.length > 0 ? (
         activityItems.map((item, index) => (
           <Swipeable
@@ -81,7 +68,7 @@ const FavoritesPage = () => {
       )}
     </>
   );
-  
+
 }
 
 const styles = StyleSheet.create({

@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { logout } from "./slices/authSlice";
+import Login from "./Login";
 
 
 const Profile = () => {
@@ -27,37 +28,38 @@ const Profile = () => {
   console.log("User is not logged in", isLoggedIn)
   if (!isLoggedIn) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>Go Vibe</Text>
-          <MaterialIcons
-            name="location-on"
-            size={50}
-            color="#2757F0"
-            style={styles.icon}
-          />
-        </View>
+      <Login />
+      // <SafeAreaView style={styles.container}>
+      //   <View style={styles.headerContainer}>
+      //     <Text style={styles.header}>Go Vibe</Text>
+      //     <MaterialIcons
+      //       name="location-on"
+      //       size={50}
+      //       color="#2757F0"
+      //       style={styles.icon}
+      //     />
+      //   </View>
 
-        <View style={styles.containerTwo}>
-          <Text style={styles.centerText}>Favorite your vibes,</Text>
-          <Text style={styles.centerText}> share your vibes.</Text>
-          <Text style={styles.centerText}>Discover your vibe.</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Login")}
-          >
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("SignUp")}
-          >
-            <Text style={styles.buttonText}>Create an account</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      //   <View style={styles.containerTwo}>
+      //     <Text style={styles.centerText}>Favorite your vibes,</Text>
+      //     <Text style={styles.centerText}> share your vibes.</Text>
+      //     <Text style={styles.centerText}>Discover your vibe.</Text>
+      //   </View>
+      //   <View>
+      //     <TouchableOpacity
+      //       style={styles.button}
+      //       onPress={() => navigation.navigate("Login")}
+      //     >
+      //       <Text style={styles.buttonText}>Sign in</Text>
+      //     </TouchableOpacity>
+      //     <TouchableOpacity
+      //       style={styles.button}
+      //       onPress={() => navigation.navigate("SignUp")}
+      //     >
+      //       <Text style={styles.buttonText}>Create an account</Text>
+      //     </TouchableOpacity>
+      //   </View>
+      // </SafeAreaView>
     );
   }
 

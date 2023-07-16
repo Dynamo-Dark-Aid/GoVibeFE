@@ -7,10 +7,11 @@ import {
   Text,
   Alert,
   TouchableOpacity,
+  Button
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { login } from "./slices/authSlice";
+import { login } from './slices/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -25,14 +26,7 @@ const Login = () => {
         password: password,
       },
     };
-    dispatch(login(userData))
-      .then(() => {
-        navigation.navigate("Home");
-        Alert.alert("Login Successful");
-      })
-      .catch((err) => {
-        Alert.alert(err.message);
-      });
+    dispatch(login(userData));
   };
 
   const handleButton = () => {
@@ -46,7 +40,7 @@ const Login = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container2}>
-        <Text style={styles.title}>Log in to Go Vibe</Text>
+        <Text style={styles.title}>Login</Text>
         <TextInput
           autoCapitalize="none"
           style={styles.input}
@@ -70,12 +64,16 @@ const Login = () => {
           <Text style={styles.buttonText}>Sign in</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
+        {/* <Button
+          // style={styles.button}
           onPress={() => navigation.navigate("SignUp")}
         >
-          <Text style={styles.buttonText}>Create an account</Text>
-        </TouchableOpacity>
+         Create an account</Button> */}
+        <Button
+        title="Create an Account"
+        onPress={() => navigation.navigate("SignUp")}
+        >
+        </Button>
       </View>
     </SafeAreaView>
   );
