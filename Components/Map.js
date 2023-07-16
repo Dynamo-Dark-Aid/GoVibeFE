@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: "10%",
+    top: "5%",
     alignSelf: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    top: "10%",
+    top: "5%",
     left: 40,
     alignSelf: "flex-end",
     justifyContent: "center",
