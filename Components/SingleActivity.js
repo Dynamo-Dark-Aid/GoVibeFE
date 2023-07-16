@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { ScrollView, View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addActivity, getActivities, removeActivity, addToFavorites, removeFromFavorites } from './slices/activitySlice';
+import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
 import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const SingleActivity = () => {
@@ -46,7 +46,7 @@ const SingleActivity = () => {
         image: activity.photo.images.large.url
       }
     }
-    dispatch(addToFavorites(activityData)); // Changed from addActivity
+    dispatch(addActivity(activityData));
   };
 
   const handleAddToItinerary = () => {
@@ -62,7 +62,7 @@ const SingleActivity = () => {
   };
 
   const handleRemoveFromFavorites = () => {
-    dispatch(removeFromFavorites(activity)); // Changed from removeActivity
+    dispatch(removeActivity(activity));
   };
 
   const handleRemoveFromItinerary = () => {
@@ -224,7 +224,7 @@ const SingleActivity = () => {
 const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
   },

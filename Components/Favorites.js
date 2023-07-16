@@ -35,10 +35,6 @@ const FavoritesPage = () => {
     );
   };
 
-  useEffect(() => {
-    setSortedFavorites(favoriteItems);
-  }, [favoriteItems]);
-
   return (
     <>
       <View>

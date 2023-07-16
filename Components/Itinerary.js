@@ -3,6 +3,8 @@ import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Sh
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
 import { displayItinerary, displayArchivedItinerary, removeFromItinerary } from './slices/itinerarySlice';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
+import { Buffer } from 'buffer';
 
 const Itinerary = () => {
   const dispatch = useDispatch();
@@ -19,8 +21,22 @@ const Itinerary = () => {
     dispatch(removeFromItinerary(item));
   };
 
-  const handleShare = () => {
-    const message = 'A Vibe Has Been Shared With You!';
+  const handleShare = useCallback(async () => {
+    const itineraryAsJson = JSON.stringify(itineraryItems);
+    const itineraryAsBase64 = Buffer.from(itineraryAsJson).toString('base64');
+
+    const link = await dynamicLinks().buildShortLink({
+      link: `https://myapp.com/itinerary?data=${itineraryAsBase64}`,
+      domainUriPrefix: 'https://govibe.page.link',
+      social: {
+        title: 'A Vibe Has Been Shared With You!',
+        descriptionText: 'Open the link to view the itinerary in Vibe app',
+        imageUrl: 'https://myapp.com/image.png'
+      },
+    }, dynamicLinks.ShortLinkType.SHORT);
+
+    const message = `A Vibe Has Been Shared With You! Open this link to view the itinerary: ${link}`;
+
     Share.share({
       message,
     })
@@ -38,7 +54,7 @@ const Itinerary = () => {
       .catch((error) => {
         console.log(error);
       });
-  };
+  }, [itineraryItems]);
 
   const renderRightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
