@@ -12,12 +12,14 @@ const SingleActivity = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const { activity } = route.params || {};
+
   const activityItems = useSelector(state => state.activity.activityItems);
   const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
-
+ 
   {if (isLoggedIn) {
     useEffect(() => {
       dispatch(getActivities());
@@ -103,7 +105,6 @@ const SingleActivity = () => {
                     <MaterialCommunityIcons
                       name="heart"
                       size={24}
-                    // paddingLeft = {24}
                     />
                   </TouchableOpacity>
                 ) : (
@@ -137,11 +138,15 @@ const SingleActivity = () => {
                 )}
               </View>
             </View>
+            <View>
+                  <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
+                  <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+            </View>
             <View style={styles.addressContainer}>
               <Text style={styles.address}>{activity.address}</Text>
             </View>
             <ScrollView style={styles.scrollBox}>
-              <Text style={styles.description}>{activity.description}</Text>
+              <Text style={styles.description}>{activity.description ? activity.description : 'no description avaliable'}</Text>
             </ScrollView>
 
             <TouchableOpacity style={styles.button} onPress={handleDirections}>
@@ -170,7 +175,6 @@ const SingleActivity = () => {
                       <MaterialCommunityIcons
                         name="heart"
                         size={24}
-                      // paddingLeft = {24}
                       />
                     </TouchableOpacity>
                   ) : (
@@ -204,11 +208,15 @@ const SingleActivity = () => {
                   )}
                 </View>
               </View>
+              <View>
+                  <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
+                  <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+              </View>
               <View style={styles.addressContainer}>
                 <Text style={styles.address}>{activity.address}</Text>
               </View>
               <ScrollView style={styles.scrollBox}>
-                <Text style={styles.description}>{activity.description}</Text>
+                <Text style={styles.description}>{activity.description ? activity.description : 'no description avaliable'}</Text>
               </ScrollView>
               <TouchableOpacity style={styles.button} onPress={handleDirections}>
                 <Text style={styles.buttonText}>Directions</Text>
@@ -216,7 +224,6 @@ const SingleActivity = () => {
             </View>
           </View>
         )}
-
     </>
   )
 };
@@ -249,6 +256,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginRight: 16
   },
+  price: {
+    width: 340,
+    marginBottom: 5,
+    justifyContent: 'flex-start'
+  },
   address: {
     fontSize: 16,
     marginBottom: 10,
@@ -256,6 +268,10 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 20,
+  },
+  ranking: {
+    marginBottom: 5,
+    fontWeight: "bold"
   },
   buttonContainer: {
     alignItems: "center",
