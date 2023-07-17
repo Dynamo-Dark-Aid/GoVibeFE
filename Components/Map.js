@@ -27,10 +27,8 @@ export default function Map({ navigation }) {
   const [option, setOption] = useState("attractions");
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  //map loading when api calls testing:
   const [loading, setLoading] = useState(false);
 
-  // change little bit about handleOption function:
   const handleOption = async () => {
     setLoading(true);
 
@@ -165,7 +163,6 @@ export default function Map({ navigation }) {
     })
   }
 
-  // console.log('====>', trails)
   const trailMarkers = () => {
     return trailIds?.map((trailId, idx) => {
       const trail = trails[trailId];
@@ -220,7 +217,6 @@ export default function Map({ navigation }) {
         {attractionsMarkers()}
         {restaurantsMarkers()}
         {trailMarkers()}
-        {/* {searchResultMarker()} */}
       </MapView>
 
       <View style={styles.buttonContainer}>
@@ -228,7 +224,6 @@ export default function Map({ navigation }) {
           <Text style={styles.buttonText} >Go Vibe</Text>
         </TouchableOpacity>
       </View>
-
 
       <View style={styles.dropdownContainer}>
 
@@ -288,8 +283,8 @@ export default function Map({ navigation }) {
           {trailIds.map((trailId, idx) => {
             const trail = trails[trailId]
             return (
-              <TouchableOpacity onPress={() => navigation.navigate("SingleActivity", { activity: trail })}>
-                <View style={styles.cardContainer} key={idx}>
+              <TouchableOpacity key={idx} onPress={() => navigation.navigate("SingleActivity", { activity: trail })}>
+                <View style={styles.cardContainer} >
                   <Text style={styles.attractionName}>{trail.name}</Text>
                   <View>
                     <Text>{trail.description}</Text>
@@ -403,55 +398,3 @@ const styles = StyleSheet.create({
 
 
 
-//                 ****** MIGHT ADD LATER FOR GOOGLE PLACES AUTOCOMPLETE SEARCH ********
-
-// const searchResultMarker = () => {
-//   return searchResult?.geometry?.location ? (
-//     <Marker
-//       coordinate={{
-//         latitude: searchResult.geometry?.location.lat,
-//         longitude: searchResult.geometry?.location.lng,
-//       }}
-//     ></Marker>
-//   ) : null;
-// };
-
-{/* <GooglePlacesAutocomplete
-        placeholder="Search"
-        minLength={2}
-        autoFocus={false}
-        returnKeyType={"search"}
-        listViewDisplayed="auto"
-        fetchDetails={true}
-        renderDescription={(row) => row.description}
-        onFail={(error) => console.error(error)}
-        // currentLocation={true}
-        onPress={(data, details = null) => {
-          // Use the selected place data
-          setSearchResult(details);
-          // console.log(data, details);
-          // console.log("searchResult ----------------->", searchResult);
-        }}
-        query={{
-          key: GOOGLE_PLACES_API_KEY,
-          language: "en",
-        }}
-        nearbyPlacesAPI="GooglePlacesSearch"
-        debounce={200}
-      /> */}
-
-
-
-
-{/* <View style={styles.scrollContainer}>
-        <ScrollView style={styles.scroll}>
-          {attractions ? (
-            <View style={styles.results}>
-              {attractions.map((attraction, idx) => {
-                return <Attractions key={idx} navigation={navigation} attraction={attraction} />;
-              })}
-            </View>
-          ) : null
-          }
-        </ScrollView>
-      </View> */}
