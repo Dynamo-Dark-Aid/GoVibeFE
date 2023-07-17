@@ -1,13 +1,18 @@
 import React, { useEffect, useState, createRef } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, SafeAreaView, ScrollView, TextInput, Button } from 'react-native';
 import Swipeable, { SwipeableRef } from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeActivity, getActivities } from './slices/activitySlice';
 
-const FavoritesPage = ({ navigation }) => {
+const FavoritesPage = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const activityItems = useSelector(state => state.activity.activityItems);
+
+  //search bar:
+  const [search, setSearch] = useState("");
+  const [filteredItems, setFilteredItems] = useState([]);
+
 
   const swipeableRef = createRef();
   const [deletedItemId, setDeletedItemId] = useState(null);
@@ -23,6 +28,14 @@ const FavoritesPage = ({ navigation }) => {
     dispatch(removeActivity(item));
     setDeletedItemId(item.id);
     setIsSwipeableOpen(true);
+  };
+
+  const handleSearch = () => {
+    const searched = activityItems.filter((item) =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    setFilteredItems(searched);
   };
 
   useEffect(() => {
@@ -51,36 +64,71 @@ const FavoritesPage = ({ navigation }) => {
   return (
     <>
       <SafeAreaView>
-        <View>
-          <Text style={styles.header}>Favorites</Text>
-        </View>
-        {activityItems.length > 0 ? (
-          activityItems.map((item, index) => (
-            <Swipeable
-              key={index}
-              ref={item.id === deletedItemId ? swipeableRef : null}
-              renderLeftActions={renderLeftActions}
-              onSwipeableLeftOpen={() => handleDelete(item)}
-            >
-              <View style={styles.favoriteContainer}>
-                <Image source={{ uri: item.image }} style={styles.favoriteImage} />
-                <View style={styles.favoriteDetails}>
-                  <Text style={styles.favoriteName}>{item.name}</Text>
-                  {/* <Text style={styles.favoriteAddress}>{item.address}</Text>
-                  <Text style={styles.favoriteAddress}>{item.description}</Text> */}
-                </View>
-              </View>
+        {/* search bar: */}
+        <ScrollView>
+          <View>
+            <Text style={styles.header}>Favorites</Text>
+            <View style={styles.searchBar}>
+              <TextInput
+                onChangeText={setSearch}
+                value={search}
+                style={styles.bar}
+                placeholder="Search by name"
+              />
 
-            </Swipeable>
-          ))
-        ) : (
-          <View style={styles.noFavoritesContainer}>
-            <View>
-              <Text style={styles.header}>Favorites</Text>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={handleSearch}>
+                <Text style={styles.searchButtonText}>Search</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
           </View>
-        )}
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item, index) => (
+              <Swipeable
+                key={index}
+                renderLeftActions={renderLeftActions}
+                onSwipeableLeftOpen={() => handleDelete(item)}
+              >
+                <View style={styles.favoriteContainer}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.favoriteImage}
+                  />
+                  <View style={styles.favoriteDetails}>
+                    <Text style={styles.favoriteName}>{item.name}</Text>
+                    {/* <Text style={styles.favoriteAddress}>{item.location}</Text>
+                    <Text style={styles.favoriteAddress}>{item.description}</Text> */}
+                  </View>
+                </View>
+              </Swipeable>
+            ))
+          ) :
+            activityItems.length > 0 ? (
+              activityItems.map((item, index) => (
+                <Swipeable
+                  key={index}
+                  ref={item.id === deletedItemId ? swipeableRef : null}
+                  renderLeftActions={renderLeftActions}
+                  onSwipeableLeftOpen={() => handleDelete(item)}
+                >
+                  <View style={styles.favoriteContainer}>
+                    <Image source={{ uri: item.image }} style={styles.favoriteImage} />
+                    <View style={styles.favoriteDetails}>
+                      <Text style={styles.favoriteName}>{item.name}</Text>
+                      {/* <Text style={styles.favoriteAddress}>{item.address}</Text>
+                  <Text style={styles.favoriteAddress}>{item.description}</Text> */}
+                    </View>
+                  </View>
+
+                </Swipeable>
+              ))
+            ) : (
+              <View style={styles.noFavoritesContainer}>
+                <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
+              </View>
+            )}
+        </ScrollView>
       </SafeAreaView>
     </>
   );
@@ -154,8 +202,34 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 50,
     fontFamily: "Futura-CondensedExtraBold",
-    margin: 16
+    marginTop: 16,
+    marginHorizontal: 16
   },
+  searchButton: {
+    backgroundColor: "#2757F0",
+    borderRadius: 10,
+    padding: 8,
+
+    alignItems: "center",
+    width: 100,
+  },
+  searchButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontFamily: "Futura",
+  },
+  searchBar: {
+    flexDirection: "row",
+    margin: 16,
+    justifyContent: "space-between",
+    alignItems: "baseline"
+  },
+  bar: {
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+    width: 225,
+    padding: 4
+  }
 });
 
 export default FavoritesPage;

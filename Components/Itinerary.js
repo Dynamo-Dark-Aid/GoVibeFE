@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share, SafeAreaView } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share, SafeAreaView, ScrollView } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { SwipeableRef } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
@@ -110,83 +110,85 @@ const Itinerary = () => {
   return (
     <>
       <SafeAreaView>
-        <View style={styles.headerContainer}>
-          <View>
-            <Text style={styles.header}>Itinerary</Text>
+        <ScrollView>
+          <View style={styles.headerContainer}>
+            <View>
+              <Text style={styles.header}>Itinerary</Text>
+            </View>
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity onPress={() => toggleMenu()}>
+                <MaterialCommunityIcons
+                  name="chevron-down-circle"
+                  size={44}
+                  color={"#414849"}
+                />
+              </TouchableOpacity>
+            </View>
+
           </View>
-          <View style={styles.dropdownContainer}>
-            <TouchableOpacity onPress={() => toggleMenu()}>
-              <MaterialCommunityIcons
-                name="chevron-down-circle"
-                size={44}
-                color={"#414849"}
+          {dropdownOpen ?
+
+            <View style={styles.modal}>
+              <Button
+                title="Current Itinerary"
+                onPress={() => {
+                  setOption("currentItinerary");
+                  setDropdownOpen(!dropdownOpen);
+                }}
               />
-            </TouchableOpacity>
-          </View>
+              <Button
+                title="Past Itineraries"
+                onPress={() => {
+                  setOption("archivedItinerary");
+                  setDropdownOpen(!dropdownOpen);
+                }}
+              />
+            </View>
+            : null}
 
-        </View>
-        {dropdownOpen ?
-
-          <View style={styles.modal}>
-            <Button
-              title="Current Itinerary"
-              onPress={() => {
-                setOption("currentItinerary");
-                setDropdownOpen(!dropdownOpen);
-              }}
-            />
-            <Button
-              title="Past Itineraries"
-              onPress={() => {
-                setOption("archivedItinerary");
-                setDropdownOpen(!dropdownOpen);
-              }}
-            />
-          </View>
-          : null}
-
-        {isLoggedIn && itineraryItems.length > 0 ? (
-          option === "currentItinerary" ? (
-            itineraryItems.map((item, index) => (
-              <Swipeable
-                key={item.id}
-                ref={ref => (swipeableRef.current[item.id] = ref)}
-                renderRightActions={renderRightActions}
-                renderLeftActions={renderLeftActions}
-                onSwipeableLeftOpen={() => handleDelete(item)}
-                onSwipeableRightOpen={() => handleArchive(item)}
-              >
-                <View style={styles.activityContainer}>
+          {isLoggedIn && itineraryItems.length > 0 ? (
+            option === "currentItinerary" ? (
+              itineraryItems.map((item, index) => (
+                <Swipeable
+                  key={item.id}
+                  ref={ref => (swipeableRef.current[item.id] = ref)}
+                  renderRightActions={renderRightActions}
+                  renderLeftActions={renderLeftActions}
+                  onSwipeableLeftOpen={() => handleDelete(item)}
+                  onSwipeableRightOpen={() => handleArchive(item)}
+                >
+                  <View style={styles.activityContainer}>
+                    <Image source={{ uri: item.image }} style={styles.activityImage} />
+                    <View style={styles.activityDetails}>
+                      <Text style={styles.activityName}>{item.name}</Text>
+                      <Text style={styles.activityAddress}>{item.location}</Text>
+                      {/* <Text style={styles.activityAddress}>{item.description}</Text> */}
+                    </View>
+                  </View>
+                </Swipeable>
+              ))
+            ) : (
+              itineraryItems.map((item, index) => (
+                <View style={styles.activityContainer} key={item.id}>
                   <Image source={{ uri: item.image }} style={styles.activityImage} />
                   <View style={styles.activityDetails}>
                     <Text style={styles.activityName}>{item.name}</Text>
                     <Text style={styles.activityAddress}>{item.location}</Text>
-                    <Text style={styles.activityAddress}>{item.description}</Text>
+                    {/* <Text style={styles.activityAddress}>{item.description}</Text> */}
                   </View>
                 </View>
-              </Swipeable>
-            ))
+              ))
+            )
           ) : (
-            itineraryItems.map((item, index) => (
-              <View style={styles.activityContainer} key={item.id}>
-                <Image source={{ uri: item.image }} style={styles.activityImage} />
-                <View style={styles.activityDetails}>
-                  <Text style={styles.activityName}>{item.name}</Text>
-                  <Text style={styles.activityAddress}>{item.location}</Text>
-                  <Text style={styles.activityAddress}>{item.description}</Text>
-                </View>
-              </View>
-            ))
-          )
-        ) : (
-          <View style={styles.noVibeContainer}>
-            <Text style={styles.noVibeText}>No Vibe Created</Text>
-          </View>
-        )}
+            <View style={styles.noVibeContainer}>
+              <Text style={styles.noVibeText}>No Vibe Created</Text>
+            </View>
+          )}
 
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Share Vibe</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Text style={styles.shareButtonText}>Share Vibe</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </SafeAreaView>
     </>
   )
@@ -204,6 +206,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: 16,
   },
   leftActions: {
     flex: 1,
@@ -260,9 +266,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: 'red',
-    marginTop: 10,
+    backgroundColor: '#2757F0',
+    marginVertical: 8,
     borderRadius: 4,
+    marginHorizontal: 16,
   },
   shareButtonText: {
     color: '#FFFFFF',
@@ -284,6 +291,9 @@ const styles = StyleSheet.create({
     width: 225,
     height: 80,
     borderRadius: 10,
+    zIndex: 2,
+    position: "absolute",
+    top: 90
   },
   header: {
     color: "black",
@@ -292,7 +302,6 @@ const styles = StyleSheet.create({
     margin: 16
   },
   headerContainer: {
-    // flex: 1,
     flexDirection: "row",
     alignItems: "baseline"
   }

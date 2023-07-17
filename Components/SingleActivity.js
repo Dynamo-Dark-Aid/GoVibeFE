@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
 import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
@@ -19,16 +19,18 @@ const SingleActivity = () => {
 
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
- 
-  {if (isLoggedIn) {
-    useEffect(() => {
-      dispatch(getActivities());
-    }, [dispatch]);
 
-    useEffect(() => {
-      dispatch(displayItinerary());
-    }, [dispatch]);
-  }}
+  {
+    if (isLoggedIn) {
+      useEffect(() => {
+        dispatch(getActivities());
+      }, [dispatch]);
+
+      useEffect(() => {
+        dispatch(displayItinerary());
+      }, [dispatch]);
+    }
+  }
 
   const handleDirections = () => {
     if (activity && activity.address) {
@@ -86,6 +88,7 @@ const SingleActivity = () => {
   const imageSource = image ? { uri: image } : null;
   return (
     <>
+      {/* <SafeAreaView> */}
       {isLoggedIn ? (
         <View style={styles.container}>
           {imageSource && (
@@ -139,8 +142,8 @@ const SingleActivity = () => {
               </View>
             </View>
             <View>
-                  <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
-                  <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+              <Text style={styles.price}>{activity.price_level ? activity.price_level : null}</Text>
+              <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
             </View>
             <View style={styles.addressContainer}>
               <Text style={styles.address}>{activity.address}</Text>
@@ -209,8 +212,8 @@ const SingleActivity = () => {
                 </View>
               </View>
               <View>
-                  <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
-                  <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+                <Text style={styles.price}>{activity.price_level ? activity.price_level : null}</Text>
+                <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
               </View>
               <View style={styles.addressContainer}>
                 <Text style={styles.address}>{activity.address}</Text>
@@ -224,6 +227,7 @@ const SingleActivity = () => {
             </View>
           </View>
         )}
+      {/* </SafeAreaView> */}
     </>
   )
 };
