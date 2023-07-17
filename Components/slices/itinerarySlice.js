@@ -59,13 +59,13 @@ export const archiveItinerary = createAsyncThunk('itinerary/archiveItinerary', a
         const { userToken } = auth
         const userItinerary = itineraryItems.find(item => item.name === itinerary.name);
 
-        const response = await axios.post(`https://govibeapi.onrender.com/archive-itinerary/${userItinerary.id}`, itinerary, {
+        const response = await axios.put(`https://govibeapi.onrender.com/archive-itinerary/${userItinerary.id}`, itinerary, {
             headers: {
                 authorization: userToken
             }
           });
 
-        return response.data;
+        return userItinerary;
     } catch (error) {
         Alert.alert('Error archiving itinerary:', error);
     }
@@ -99,7 +99,9 @@ const itinerarySlice = createSlice({
         itineraryItems: [],
     },
     reducers: {
-
+        clearItineraryItems(state, action) {
+            state.itineraryItems = [];
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(displayItinerary.fulfilled, (state, action) => {
@@ -114,8 +116,18 @@ const itinerarySlice = createSlice({
         builder.addCase(removeFromItinerary.fulfilled, (state, action) => {
             const { id } = action.payload;
             state.itineraryItems = state.itineraryItems.filter(item => item.id !== id);
+        }),
+        builder.addCase(archiveItinerary.fulfilled, (state, action) => {
+            console.log('state.itineraryItems', state.itineraryItems)
+            console.log('action.payload', action.payload)
+            const { id } = action.payload;
+            state.itineraryItems = state.itineraryItems.filter(item => item.id !== id);
+            console.log('state.itineraryItems', state.itineraryItems)
         })
     }
 })
+
+export const { clearItineraryItems } = itinerarySlice.actions;
+
 
 export default itinerarySlice.reducer;
