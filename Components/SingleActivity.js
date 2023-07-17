@@ -70,10 +70,9 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-
-        image: activity.photo.images.large.url,
+        image: activity.photo?.images?.large?.url,
       },
-
+    }
     dispatch(addActivity(activityData));
   };
 
@@ -83,8 +82,7 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-
-        image: activity.photo.images.large.url,
+        image: activity.photo?.images?.large?.url,
       },
     };
     dispatch(addToItinerary(itineraryData));
@@ -164,13 +162,11 @@ activity.photo.images.large.url
               </View>
             </View>
             <View>
-
                 <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
                 <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
             </View>
             <View>
               <Text style={styles.phone}>{activity.phone ? activity.phone : null}</Text>
-
             </View>
             <View style={styles.addressContainer}>
               <Text style={styles.address}>{activity.address}</Text>
@@ -192,16 +188,15 @@ activity.photo.images.large.url
       )
         : (
           <View style={styles.container}>
-          {imageSource ?  (
-            <View style={styles.imageContainer}>
-              <Image source={imageSource} style={styles.image} resizeMode="cover" />
-            </View>
-          ): (
-            <View style={styles.imageContainer}>
-              <Image source={{uri: 'https://www.metmuseum.org/content/img/placeholders/NoImageAvailableIcon.png'}} style={styles.image} resizeMode="cover" />
-            </View>
-          )}
-
+            {imageSource ?  (
+              <View style={styles.imageContainer}>
+                <Image source={imageSource} style={styles.image} resizeMode="cover" />
+              </View>
+            ): (
+              <View style={styles.imageContainer}>
+                <Image source={{uri: 'https://www.metmuseum.org/content/img/placeholders/NoImageAvailableIcon.png'}} style={styles.image} resizeMode="cover" />
+              </View>
+            )}
             <View style={styles.infoContainer}>
               <View style={styles.headerContainer}>
                 <View style={styles.nameContainer}>
@@ -256,7 +251,6 @@ activity.photo.images.large.url
             </View>
               <View style={styles.addressContainer}>
                 <Text style={styles.address}>{activity.address}</Text>
-
               </View>
             </View>
             <View>
@@ -281,9 +275,7 @@ activity.photo.images.large.url
               <Text style={styles.buttonText}>Directions</Text>
             </TouchableOpacity>
           </View>
-        </View>
       )}
-
     </>
   );
 };

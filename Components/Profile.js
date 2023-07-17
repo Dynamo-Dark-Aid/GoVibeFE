@@ -30,7 +30,6 @@ const Profile = () => {
     dispatch(logout()); // Dispatch the loginSuccess action
   };
 
-  console.log("User is not logged in", isLoggedIn);
   if (!isLoggedIn) {
     return <Login />;
   }
