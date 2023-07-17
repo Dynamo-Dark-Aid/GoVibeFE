@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef, createRef } from "react";
 import {
   View,
@@ -19,6 +20,7 @@ import {
   removeFromItinerary,
   archiveItinerary,
 } from "./slices/itinerarySlice";
+
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { clearItineraryItems } from "./slices/itinerarySlice";
 import { incrementCompletedCount } from "./slices/userSlice";
@@ -126,6 +128,7 @@ const Itinerary = () => {
 
   return (
     <>
+
       <View style={styles.dropdownContainer}>
         <TouchableOpacity onPress={() => toggleMenu()}>
           <MaterialCommunityIcons
@@ -192,17 +195,13 @@ const Itinerary = () => {
                 <Text style={styles.activityAddress}>{item.description}</Text>
               </View>
             </View>
-          ))
-        )
-      ) : (
-        <View style={styles.noVibeContainer}>
-          <Text style={styles.noVibeText}>No Vibe Created</Text>
-        </View>
-      )}
+          )}
 
-      <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-        <Text style={styles.shareButtonText}>Share Vibe</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Text style={styles.shareButtonText}>Share Vibe</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };
@@ -219,6 +218,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#F0F0F0",
     marginBottom: 10,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: 16,
   },
   leftActions: {
     flex: 1,
@@ -275,9 +278,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 12,
+
     backgroundColor: "red",
     marginTop: 10,
+
     borderRadius: 4,
+    marginHorizontal: 16,
   },
   shareButtonText: {
     color: "#FFFFFF",
@@ -294,6 +300,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "gray",
   },
+  modal: {
+    backgroundColor: "white",
+    width: 225,
+    height: 80,
+    borderRadius: 10,
+    zIndex: 2,
+    position: "absolute",
+    top: 90
+  },
+  header: {
+    color: "black",
+    fontSize: 50,
+    fontFamily: "Futura-CondensedExtraBold",
+    margin: 16
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "baseline"
+  }
 });
 
 export default Itinerary;
