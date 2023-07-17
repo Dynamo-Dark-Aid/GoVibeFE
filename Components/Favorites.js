@@ -60,7 +60,6 @@ const FavoritesPage = () => {
       </View>
     );
   };
-
   return (
     <>
       <SafeAreaView>
@@ -189,14 +188,20 @@ const styles = StyleSheet.create({
     color: '#007AFF',
   },
   noFavoritesContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#F0F0F0',
+    marginBottom: 10,
+    marginHorizontal: 16,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   noFavoritesText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'gray',
+    color: 'black',
   },
   header: {
     color: "black",
