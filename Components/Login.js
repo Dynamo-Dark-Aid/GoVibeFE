@@ -7,11 +7,11 @@ import {
   Text,
   Alert,
   TouchableOpacity,
-  Button
+  Button,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { login } from './slices/authSlice';
+import { login } from "./slices/authSlice";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -26,7 +26,14 @@ const Login = () => {
         password: password,
       },
     };
-    dispatch(login(userData));
+    dispatch(login(userData))
+      .then(() => {
+        navigation.navigate("Home");
+        Alert.alert("Login Successful");
+      })
+      .catch((err) => {
+        Alert.alert(err.message);
+      });
   };
 
   const handleButton = () => {
@@ -70,10 +77,9 @@ const Login = () => {
         >
          Create an account</Button> */}
         <Button
-        title="Create an Account"
-        onPress={() => navigation.navigate("SignUp")}
-        >
-        </Button>
+          title="Create an Account"
+          onPress={() => navigation.navigate("SignUp")}
+        ></Button>
       </View>
     </SafeAreaView>
   );
