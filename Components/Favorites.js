@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeActivity, getActivities } from './slices/activitySlice';
 
-const FavoritesPage = () => {
+const FavoritesPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const activityItems = useSelector(state => state.activity.activityItems);
-  
+
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(getActivities());
@@ -37,31 +37,34 @@ const FavoritesPage = () => {
 
   return (
     <>
-      <View>
-        <Text>Favorites</Text>
-      </View>
-      {activityItems.length > 0 ? (
-        activityItems.map((item, index) => (
-          <Swipeable
-            key={index}
-            renderLeftActions={renderLeftActions}
-            onSwipeableLeftOpen={() => handleDelete(item)}
-          >
-            <View style={styles.favoriteContainer}>
-              <Image source={{ uri: item.image }} style={styles.favoriteImage} />
-              <View style={styles.favoriteDetails}>
-                <Text style={styles.favoriteName}>{item.name}</Text>
-                <Text style={styles.favoriteAddress}>{item.location}</Text>
-                <Text style={styles.favoriteAddress}>{item.description}</Text>
-              </View>
-            </View>
-          </Swipeable>
-        ))
-      ) : (
-        <View style={styles.noFavoritesContainer}>
-          <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
+      <SafeAreaView>
+        <View>
+          <Text style={styles.header}>Favorites</Text>
         </View>
-      )}
+        {activityItems.length > 0 ? (
+          activityItems.map((item, index) => (
+            <Swipeable
+              key={index}
+              renderLeftActions={renderLeftActions}
+              onSwipeableLeftOpen={() => handleDelete(item)}
+            >
+              <View style={styles.favoriteContainer}>
+                <Image source={{ uri: item.image }} style={styles.favoriteImage} />
+                <View style={styles.favoriteDetails}>
+                  <Text style={styles.favoriteName}>{item.name}</Text>
+                  {/* <Text style={styles.favoriteAddress}>{item.location}</Text>
+                  <Text style={styles.favoriteAddress}>{item.description}</Text> */}
+                </View>
+              </View>
+
+            </Swipeable>
+          ))
+        ) : (
+          <View style={styles.noFavoritesContainer}>
+            <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
+          </View>
+        )}
+      </SafeAreaView>
     </>
   );
 
@@ -75,12 +78,13 @@ const styles = StyleSheet.create({
   favoriteContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    padding: 8,
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
-    borderColor: 'black', // Add this line
-    borderWidth: 1, // Add this line for 1 pixel black border, adjust as needed
-    borderRadius: 5, // Optional, if you want rounded corners
+    marginHorizontal: 16,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   favoriteImage: {
     width: 50,
@@ -108,6 +112,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: "Futura"
   },
   sortButton: {
     alignItems: 'center',
@@ -127,6 +132,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'gray',
+  },
+  header: {
+    color: "black",
+    fontSize: 50,
+    fontFamily: "Futura-CondensedExtraBold",
+    margin: 16
   },
 });
 
