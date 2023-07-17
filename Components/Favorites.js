@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import React, { useEffect, useState, createRef } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
+import Swipeable, { SwipeableRef } from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeActivity, getActivities } from './slices/activitySlice';
 
@@ -8,6 +8,10 @@ const FavoritesPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const activityItems = useSelector(state => state.activity.activityItems);
+  
+  const swipeableRef = createRef();
+  const [deletedItemId, setDeletedItemId] = useState(null);
+  const [isSwipeableOpen, setIsSwipeableOpen] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -17,7 +21,16 @@ const FavoritesPage = ({ navigation }) => {
 
   const handleDelete = (item) => {
     dispatch(removeActivity(item));
+    setDeletedItemId(item.id);
+    setIsSwipeableOpen(true);
   };
+
+  useEffect(() => {
+    if (isSwipeableOpen) {
+      swipeableRef.current.close();
+      setIsSwipeableOpen(false);
+    }
+  }, [isSwipeableOpen]);
 
   const renderLeftActions = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -44,7 +57,8 @@ const FavoritesPage = ({ navigation }) => {
         {activityItems.length > 0 ? (
           activityItems.map((item, index) => (
             <Swipeable
-              key={index}
+              key={index.id}
+            ref={item.id === deletedItemId ? swipeableRef : null}
               renderLeftActions={renderLeftActions}
               onSwipeableLeftOpen={() => handleDelete(item)}
             >
