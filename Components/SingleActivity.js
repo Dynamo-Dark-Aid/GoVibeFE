@@ -1,29 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
-import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { addActivity, getActivities, removeActivity } from './slices/activitySlice';
-import { addToItinerary, removeFromItinerary, displayItinerary } from './slices/itinerarySlice';
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { ScrollView } from 'react-native-gesture-handler';
 
+import React, { useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addActivity,
+  getActivities,
+  removeActivity,
+} from "./slices/activitySlice";
+import {
+  addToItinerary,
+  removeFromItinerary,
+  displayItinerary,
+} from "./slices/itinerarySlice";
+
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { ScrollView } from "react-native-gesture-handler";
 
 const SingleActivity = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const { activity } = route.params || {};
 
-  const activityItems = useSelector(state => state.activity.activityItems);
-  const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
-  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const activityItems = useSelector((state) => state.activity.activityItems);
+  const itineraryItems = useSelector((state) => state.itinerary.itineraryItems);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const isActivityFavorite = activityItems.some(item => item.name === activity.name);
-  const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
-  
-  {if (isLoggedIn) {
-    useEffect(() => {
-      dispatch(getActivities());
-    }, [dispatch]);
+
+  const isActivityFavorite = activityItems.some(
+    (item) => item.name === activity.name
+  );
+  const isActivityInItinerary = itineraryItems.some(
+    (item) => item.name === activity.name
+  );
+
+  {
+    if (isLoggedIn) {
+      useEffect(() => {
+        dispatch(getActivities());
+      }, [dispatch]);
+
 
       useEffect(() => {
         dispatch(displayItinerary());
@@ -46,9 +70,10 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        image: activity.photo?.images?.large?.url
-      }
-    }
+
+        image: activity.photo.images.large.url,
+      },
+
     dispatch(addActivity(activityData));
   };
 
@@ -58,9 +83,10 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        image: activity.photo?.images?.large?.url
-      }
-    }
+
+        image: activity.photo.images.large.url,
+      },
+    };
     dispatch(addToItinerary(itineraryData));
   };
 
@@ -70,7 +96,7 @@ const SingleActivity = () => {
 
   const handleRemoveFromItinerary = () => {
     dispatch(removeFromItinerary(activity));
-  }
+  };
 
   if (!activity) {
     return null;
@@ -92,7 +118,11 @@ activity.photo.images.large.url
         <View style={styles.container}>
           {imageSource ?  (
             <View style={styles.imageContainer}>
-              <Image source={imageSource} style={styles.image} resizeMode="cover" />
+              <Image
+                source={imageSource}
+                style={styles.image}
+                resizeMode="cover"
+              />
             </View>
           ): (
             <View style={styles.imageContainer}>
@@ -105,23 +135,13 @@ activity.photo.images.large.url
                 <Text style={styles.name}>{activity.name}</Text>
               </View>
               <View style={styles.iconContainer}>
-
                 {isActivityFavorite ? (
                   <TouchableOpacity onPress={handleRemoveFromFavorites}>
-                    <MaterialCommunityIcons
-                      name="heart"
-                      size={24}
-                    />
+                    <MaterialCommunityIcons name="heart" size={24} />
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity
-                    onPress={handleAddToFavorites}
-                  >
-
-                    <MaterialCommunityIcons
-                      name="heart-outline"
-                      size={24}
-                    />
+                  <TouchableOpacity onPress={handleAddToFavorites}>
+                    <MaterialCommunityIcons name="heart-outline" size={24} />
                   </TouchableOpacity>
                 )}
                 {isActivityInItinerary ? (
@@ -130,7 +150,6 @@ activity.photo.images.large.url
                       name="minus"
                       size={24}
                       paddingLeft={8}
-
                     />
                   </TouchableOpacity>
                 ) : (
@@ -145,17 +164,23 @@ activity.photo.images.large.url
               </View>
             </View>
             <View>
+
                 <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
                 <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
             </View>
             <View>
               <Text style={styles.phone}>{activity.phone ? activity.phone : null}</Text>
+
             </View>
             <View style={styles.addressContainer}>
               <Text style={styles.address}>{activity.address}</Text>
             </View>
             <ScrollView style={styles.scrollBox}>
-              <Text style={styles.description}>{activity.description ? activity.description : 'no description avaliable'}</Text>
+              <Text style={styles.description}>
+                {activity.description
+                  ? activity.description
+                  : "no description avaliable"}
+              </Text>
             </ScrollView>
 
             <TouchableOpacity style={styles.button} onPress={handleDirections}>
@@ -163,6 +188,7 @@ activity.photo.images.large.url
             </TouchableOpacity>
           </View>
         </View>
+
       )
         : (
           <View style={styles.container}>
@@ -230,19 +256,36 @@ activity.photo.images.large.url
             </View>
               <View style={styles.addressContainer}>
                 <Text style={styles.address}>{activity.address}</Text>
+
               </View>
-              <ScrollView style={styles.scrollBox}>
-                <Text style={styles.description}>{activity.description ? activity.description : 'no description avaliable'}</Text>
-              </ScrollView>
-              <TouchableOpacity style={styles.button} onPress={handleDirections}>
-                <Text style={styles.buttonText}>Directions</Text>
-              </TouchableOpacity>
             </View>
+            <View>
+              <Text style={styles.price}>
+                {activity.price_level ? activity.price_level : null}
+              </Text>
+              <Text style={styles.ranking}>
+                {activity.ranking ? activity.ranking : null}
+              </Text>
+            </View>
+            <View style={styles.addressContainer}>
+              <Text style={styles.address}>{activity.address}</Text>
+            </View>
+            <ScrollView style={styles.scrollBox}>
+              <Text style={styles.description}>
+                {activity.description
+                  ? activity.description
+                  : "no description avaliable"}
+              </Text>
+            </ScrollView>
+            <TouchableOpacity style={styles.button} onPress={handleDirections}>
+              <Text style={styles.buttonText}>Directions</Text>
+            </TouchableOpacity>
           </View>
-        )}
-      {/* </SafeAreaView> */}
+        </View>
+      )}
+
     </>
-  )
+  );
 };
 
 const { height } = Dimensions.get("window");
@@ -255,7 +298,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: "100%",
     height: height / 2.5,
-    paddingBottom: 12
+    paddingBottom: 12,
   },
   image: {
     flex: 1,
@@ -273,18 +316,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-    width: "100%"
+    width: "100%",
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
-    marginRight: 16
+    marginRight: 16,
   },
   price: {
     width: 340,
     marginBottom: 5,
-    justifyContent: 'flex-start'
+    justifyContent: "flex-start",
   },
   address: {
     fontSize: 16,
@@ -296,7 +339,7 @@ const styles = StyleSheet.create({
   },
   ranking: {
     marginBottom: 5,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   buttonContainer: {
     alignItems: "center",
@@ -309,7 +352,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
-    width: 200
+    width: 200,
   },
   buttonText: {
     color: "#fff",
@@ -320,7 +363,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     justifyContent: "center",
-    width: "100 %"
+    width: "100 %",
   },
   iconContainer: {
     flexDirection: "row",
@@ -328,15 +371,14 @@ const styles = StyleSheet.create({
   scrollBox: {
     marginBottom: 8,
     paddingHorizontal: 0,
-    width: "100%"
+    width: "100%",
   },
   nameContainer: {
-    flex: 1
+    flex: 1,
   },
   addressContainer: {
-    alignSelf: "flex-start"
-  }
-
+    alignSelf: "flex-start",
+  },
 });
 SingleActivity.navigationOptions = {
   title: "Activity Details",
