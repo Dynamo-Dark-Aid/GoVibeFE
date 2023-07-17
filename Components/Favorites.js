@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createRef } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
 import Swipeable, { SwipeableRef } from 'react-native-gesture-handler/Swipeable';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeActivity, getActivities } from './slices/activitySlice';
@@ -8,7 +8,7 @@ const FavoritesPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const activityItems = useSelector(state => state.activity.activityItems);
-  
+
   const swipeableRef = createRef();
   const [deletedItemId, setDeletedItemId] = useState(null);
   const [isSwipeableOpen, setIsSwipeableOpen] = useState(false);
@@ -58,7 +58,7 @@ const FavoritesPage = ({ navigation }) => {
           activityItems.map((item, index) => (
             <Swipeable
               key={index.id}
-            ref={item.id === deletedItemId ? swipeableRef : null}
+              ref={item.id === deletedItemId ? swipeableRef : null}
               renderLeftActions={renderLeftActions}
               onSwipeableLeftOpen={() => handleDelete(item)}
             >
@@ -66,7 +66,7 @@ const FavoritesPage = ({ navigation }) => {
                 <Image source={{ uri: item.image }} style={styles.favoriteImage} />
                 <View style={styles.favoriteDetails}>
                   <Text style={styles.favoriteName}>{item.name}</Text>
-                  {/* <Text style={styles.favoriteAddress}>{item.location}</Text>
+                  {/* <Text style={styles.favoriteAddress}>{item.address}</Text>
                   <Text style={styles.favoriteAddress}>{item.description}</Text> */}
                 </View>
               </View>
@@ -75,6 +75,9 @@ const FavoritesPage = ({ navigation }) => {
           ))
         ) : (
           <View style={styles.noFavoritesContainer}>
+            <View>
+              <Text style={styles.header}>Favorites</Text>
+            </View>
             <Text style={styles.noFavoritesText}>No Favorites Listed</Text>
           </View>
         )}

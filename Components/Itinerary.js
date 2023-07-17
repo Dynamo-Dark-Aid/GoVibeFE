@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share, SafeAreaView } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { SwipeableRef } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
@@ -109,48 +109,66 @@ const Itinerary = () => {
 
   return (
     <>
-    <View style={styles.dropdownContainer}>
-      <TouchableOpacity onPress={() => toggleMenu()}>
-        <MaterialCommunityIcons
-          name="chevron-down-circle"
-          size={44}
-          color={"#414849"}
-        />
-      </TouchableOpacity>
+      <SafeAreaView>
+        <View style={styles.headerContainer}>
+          <View>
+            <Text style={styles.header}>Itinerary</Text>
+          </View>
+          <View style={styles.dropdownContainer}>
+            <TouchableOpacity onPress={() => toggleMenu()}>
+              <MaterialCommunityIcons
+                name="chevron-down-circle"
+                size={44}
+                color={"#414849"}
+              />
+            </TouchableOpacity>
+          </View>
 
-      {dropdownOpen ?
-
-        <View style={styles.modal}>
-          <Button
-            title="Current Itinerary"
-            onPress={() => {
-              setOption("currentItinerary");
-              setDropdownOpen(!dropdownOpen);
-            }}
-          />
-          <Button
-            title="Past Itinerary Items"
-            onPress={() => {
-              setOption("archivedItinerary");
-              setDropdownOpen(!dropdownOpen);
-            }}
-          />
         </View>
-        : null}
-      </View>
+        {dropdownOpen ?
 
-      {isLoggedIn && itineraryItems.length > 0 ? (
-        option === "currentItinerary" ? (
-          itineraryItems.map((item, index) => (
-            <Swipeable
-              key={item.id}
-              ref={ref => (swipeableRef.current[item.id] = ref)}
-              renderRightActions={renderRightActions}
-              renderLeftActions={renderLeftActions}
-              onSwipeableLeftOpen={() => handleDelete(item)}
-              onSwipeableRightOpen={() => handleArchive(item)}
-            >
-              <View style={styles.activityContainer}>
+          <View style={styles.modal}>
+            <Button
+              title="Current Itinerary"
+              onPress={() => {
+                setOption("currentItinerary");
+                setDropdownOpen(!dropdownOpen);
+              }}
+            />
+            <Button
+              title="Past Itineraries"
+              onPress={() => {
+                setOption("archivedItinerary");
+                setDropdownOpen(!dropdownOpen);
+              }}
+            />
+          </View>
+          : null}
+
+        {isLoggedIn && itineraryItems.length > 0 ? (
+          option === "currentItinerary" ? (
+            itineraryItems.map((item, index) => (
+              <Swipeable
+                key={item.id}
+                ref={ref => (swipeableRef.current[item.id] = ref)}
+                renderRightActions={renderRightActions}
+                renderLeftActions={renderLeftActions}
+                onSwipeableLeftOpen={() => handleDelete(item)}
+                onSwipeableRightOpen={() => handleArchive(item)}
+              >
+                <View style={styles.activityContainer}>
+                  <Image source={{ uri: item.image }} style={styles.activityImage} />
+                  <View style={styles.activityDetails}>
+                    <Text style={styles.activityName}>{item.name}</Text>
+                    <Text style={styles.activityAddress}>{item.location}</Text>
+                    <Text style={styles.activityAddress}>{item.description}</Text>
+                  </View>
+                </View>
+              </Swipeable>
+            ))
+          ) : (
+            itineraryItems.map((item, index) => (
+              <View style={styles.activityContainer} key={item.id}>
                 <Image source={{ uri: item.image }} style={styles.activityImage} />
                 <View style={styles.activityDetails}>
                   <Text style={styles.activityName}>{item.name}</Text>
@@ -158,29 +176,18 @@ const Itinerary = () => {
                   <Text style={styles.activityAddress}>{item.description}</Text>
                 </View>
               </View>
-            </Swipeable>
-          ))
+            ))
+          )
         ) : (
-          itineraryItems.map((item, index) => (
-            <View style={styles.activityContainer} key={item.id}>
-              <Image source={{ uri: item.image }} style={styles.activityImage} />
-              <View style={styles.activityDetails}>
-                <Text style={styles.activityName}>{item.name}</Text>
-                <Text style={styles.activityAddress}>{item.location}</Text>
-                <Text style={styles.activityAddress}>{item.description}</Text>
-              </View>
-            </View>
-          ))
-        )
-      ) : (
-        <View style={styles.noVibeContainer}>
-          <Text style={styles.noVibeText}>No Vibe Created</Text>
-        </View>
-      )}
+          <View style={styles.noVibeContainer}>
+            <Text style={styles.noVibeText}>No Vibe Created</Text>
+          </View>
+        )}
 
-      <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-        <Text style={styles.shareButtonText}>Share Vibe</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+          <Text style={styles.shareButtonText}>Share Vibe</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     </>
   )
 };
@@ -272,6 +279,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'gray',
   },
+  modal: {
+    backgroundColor: "white",
+    width: 225,
+    height: 80,
+    borderRadius: 10,
+  },
+  header: {
+    color: "black",
+    fontSize: 50,
+    fontFamily: "Futura-CondensedExtraBold",
+    margin: 16
+  },
+  headerContainer: {
+    // flex: 1,
+    flexDirection: "row",
+    alignItems: "baseline"
+  }
 });
 
 export default Itinerary;
