@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Image, View, Text, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, View, Text, TouchableOpacity } from "react-native";
 
 export default function Restaurants({ restaurant, navigation }) {
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, Image, TouchableOpacity, Linking, StyleSheet, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ const SingleActivity = () => {
 
   const isActivityFavorite = activityItems.some(item => item.name === activity.name);
   const isActivityInItinerary = itineraryItems.some(item => item.name === activity.name);
- 
+  
   {if (isLoggedIn) {
     useEffect(() => {
       dispatch(getActivities());
@@ -45,7 +45,7 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        image: activity.photo.images.large.url
+        image: activity.photo?.images?.large?.url
       }
     }
     dispatch(addActivity(activityData));
@@ -57,7 +57,7 @@ const SingleActivity = () => {
         name: activity.name,
         location: activity.address,
         description: activity.description,
-        image: activity.photo.images.large.url
+        image: activity.photo?.images?.large?.url
       }
     }
     dispatch(addToItinerary(itineraryData));
@@ -74,23 +74,27 @@ const SingleActivity = () => {
   if (!activity) {
     return null;
   }
+
   let image = null;
-  if (
-    activity.photo &&
-    activity.photo.images &&
-    activity.photo.images.large &&
-    activity.photo.images.large.url
-  ) {
-    image = activity.photo.images.large.url;
+
+  if ( activity.photo && activity.photo.images && activity.photo.images.large &&
+activity.photo.images.large.url
+  ) { image = activity.photo.images.large.url;
   }
+
   const imageSource = image ? { uri: image } : null;
+
   return (
     <>
       {isLoggedIn ? (
         <View style={styles.container}>
-          {imageSource && (
+          {imageSource ?  (
             <View style={styles.imageContainer}>
               <Image source={imageSource} style={styles.image} resizeMode="cover" />
+            </View>
+          ): (
+            <View style={styles.imageContainer}>
+              <Image source={{uri: 'https://www.metmuseum.org/content/img/placeholders/NoImageAvailableIcon.png'}} style={styles.image} resizeMode="cover" />
             </View>
           )}
           <View style={styles.infoContainer}>
@@ -139,8 +143,11 @@ const SingleActivity = () => {
               </View>
             </View>
             <View>
-                  <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
-                  <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+                <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
+                <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
+            </View>
+            <View>
+              <Text style={styles.phone}>{activity.phone ? activity.phone : null}</Text>
             </View>
             <View style={styles.addressContainer}>
               <Text style={styles.address}>{activity.address}</Text>
@@ -157,11 +164,15 @@ const SingleActivity = () => {
       )
         : (
           <View style={styles.container}>
-            {imageSource && (
-              <View style={styles.imageContainer}>
-                <Image source={imageSource} style={styles.image} resizeMode="cover" />
-              </View>
-            )}
+          {imageSource ?  (
+            <View style={styles.imageContainer}>
+              <Image source={imageSource} style={styles.image} resizeMode="cover" />
+            </View>
+          ): (
+            <View style={styles.imageContainer}>
+              <Image source={{uri: 'https://www.metmuseum.org/content/img/placeholders/NoImageAvailableIcon.png'}} style={styles.image} resizeMode="cover" />
+            </View>
+          )}
 
             <View style={styles.infoContainer}>
               <View style={styles.headerContainer}>
@@ -212,6 +223,9 @@ const SingleActivity = () => {
                   <Text style={styles.price}>{activity.price_level ? activity.price_level:null}</Text>
                   <Text style={styles.ranking}>{activity.ranking ? activity.ranking : null}</Text>
               </View>
+              <View>
+              <Text style={styles.phone}>{activity.phone ? activity.phone : null}</Text>
+            </View>
               <View style={styles.addressContainer}>
                 <Text style={styles.address}>{activity.address}</Text>
               </View>
@@ -242,6 +256,14 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
+  },
+  phone: {
+    marginRight: 225,
+    marginBottom: 10,
+    marginTop: 5,
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 12
   },
   infoContainer: {
     flex: 1,
