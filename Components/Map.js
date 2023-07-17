@@ -28,6 +28,7 @@ export default function Map({ navigation }) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   const [loading, setLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("attractions");
 
   const handleOption = async () => {
     setLoading(true);
@@ -182,8 +183,9 @@ export default function Map({ navigation }) {
     })
   }
 
-  const toggleMenu = () => {
+  const toggleMenu = (option) => {
     setDropdownOpen(!dropdownOpen)
+    setSelectedOption(option);
   }
 
 
@@ -231,7 +233,14 @@ export default function Map({ navigation }) {
           <MaterialCommunityIcons
             name="chevron-down-circle"
             size={44}
-            color={"#414849"}
+            color={
+              selectedOption === "attractions"
+                ? "#414849"
+                : selectedOption === "trails"
+                  ? "#008000"
+                  : "#2757F0" // Blue color for restaurants
+
+            }
           />
         </TouchableOpacity>
 
@@ -242,6 +251,7 @@ export default function Map({ navigation }) {
               title="Attractions"
               onPress={() => {
                 setOption("attractions");
+                toggleMenu("attractions")
                 setDropdownOpen(!dropdownOpen);
               }}
             />
@@ -249,6 +259,7 @@ export default function Map({ navigation }) {
               title="Restaurants"
               onPress={() => {
                 setOption("restaurants");
+                toggleMenu("restaurants")
                 setDropdownOpen(!dropdownOpen);
               }}
             />
@@ -256,6 +267,7 @@ export default function Map({ navigation }) {
               title="Trails"
               onPress={() => {
                 setOption("trails");
+                toggleMenu("trails")
                 setDropdownOpen(!dropdownOpen);
               }}
             />
@@ -317,7 +329,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: "5%",
+    top: "6%",
     alignSelf: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -355,7 +367,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    top: "5%",
+    top: "6%",
     left: 40,
     alignSelf: "flex-end",
     justifyContent: "center",

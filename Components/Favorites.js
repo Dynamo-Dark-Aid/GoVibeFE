@@ -22,7 +22,7 @@ const FavoritesPage = () => {
     if (isLoggedIn) {
       dispatch(getActivities());
     }
-  }, [dispatch, isLoggedIn]);
+  }, [dispatch, isLoggedIn, filteredItems]);
 
   const handleDelete = (item) => {
     dispatch(removeActivity(item));
@@ -30,9 +30,10 @@ const FavoritesPage = () => {
     setIsSwipeableOpen(true);
   };
 
-  const handleSearch = () => {
+  const handleSearch = (searchInput) => {
+    setSearch(searchInput)
     const searched = activityItems.filter((item) =>
-      item.name.toLowerCase().includes(search.toLowerCase())
+      item.name.toLowerCase().includes(searchInput.toLowerCase())
     );
 
     setFilteredItems(searched);
@@ -69,17 +70,17 @@ const FavoritesPage = () => {
             <Text style={styles.header}>Favorites</Text>
             <View style={styles.searchBar}>
               <TextInput
-                onChangeText={setSearch}
+                onChangeText={handleSearch}
                 value={search}
                 style={styles.bar}
                 placeholder="Search by name"
               />
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.searchButton}
                 onPress={handleSearch}>
                 <Text style={styles.searchButtonText}>Search</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
           {filteredItems.length > 0 ? (
@@ -194,9 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     marginBottom: 10,
     marginHorizontal: 16,
-    // borderColor: 'black',
-    // borderWidth: 1,
-    // borderRadius: 5,
   },
   noFavoritesText: {
     fontSize: 16,
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
   bar: {
     borderBottomWidth: 1,
     borderBottomColor: "black",
-    width: 225,
+    width: 340,
     padding: 4
   }
 });

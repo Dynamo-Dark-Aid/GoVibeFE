@@ -113,7 +113,7 @@ const Itinerary = () => {
         <ScrollView>
           <View style={styles.headerContainer}>
             <View>
-              <Text style={styles.header}>Itinerary</Text>
+              <Text style={styles.header}>Vibes</Text>
             </View>
             <View style={styles.dropdownContainer}>
               <TouchableOpacity onPress={() => toggleMenu()}>
@@ -130,14 +130,14 @@ const Itinerary = () => {
 
             <View style={styles.modal}>
               <Button
-                title="Current Itinerary"
+                title="Current Vibes"
                 onPress={() => {
                   setOption("currentItinerary");
                   setDropdownOpen(!dropdownOpen);
                 }}
               />
               <Button
-                title="Past Itineraries"
+                title="Past Vibes"
                 onPress={() => {
                   setOption("archivedItinerary");
                   setDropdownOpen(!dropdownOpen);
