@@ -5,17 +5,6 @@
     "version": "1.0.0",
     "plugins": [
       [
-        "@react-native-firebase/app",
-        {
-          "ios": {
-            "googleServicesFile": "./ios/GoogleService-Info.plist"
-          },
-          "android": {
-            "googleServicesFile": "./google-services.json"
-          }
-        }
-      ],
-      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow GoVibe to use your location."
