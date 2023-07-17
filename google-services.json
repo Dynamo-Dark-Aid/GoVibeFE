@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "639913881326",
+    "project_id": "govibe-664c7",
+    "storage_bucket": "govibe-664c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639913881326:android:a20f42172ac3fcff33cdff",
+        "android_client_info": {
+          "package_name": "org.name.GoVibeFe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639913881326-6u51l1flqv15pkrh03dltfclag32039b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7Wg7dwuznM9JhhTI3b5C3CBG1GQuw0Zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639913881326-6u51l1flqv15pkrh03dltfclag32039b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "639913881326-3kfn19mks129dt0og8majsueelrqhv5b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.name.GoVibeFe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
