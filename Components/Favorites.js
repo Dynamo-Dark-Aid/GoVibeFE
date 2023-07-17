@@ -57,7 +57,7 @@ const FavoritesPage = ({ navigation }) => {
         {activityItems.length > 0 ? (
           activityItems.map((item, index) => (
             <Swipeable
-              key={index.id}
+              key={index}
               ref={item.id === deletedItemId ? swipeableRef : null}
               renderLeftActions={renderLeftActions}
               onSwipeableLeftOpen={() => handleDelete(item)}
