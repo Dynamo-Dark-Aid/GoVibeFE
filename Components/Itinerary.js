@@ -128,6 +128,21 @@ const Itinerary = () => {
 
   return (
     <>
+      <SafeAreaView>
+        <ScrollView>
+          <View style={styles.headerContainer}>
+            <View>
+              <Text style={styles.header}>Vibes</Text>
+            </View>
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity onPress={() => toggleMenu()}>
+                <MaterialCommunityIcons
+                  name="chevron-down-circle"
+                  size={44}
+                  color={"#414849"}
+                />
+              </TouchableOpacity>
+            </View>
 
       <View style={styles.dropdownContainer}>
         <TouchableOpacity onPress={() => toggleMenu()}>
@@ -137,6 +152,7 @@ const Itinerary = () => {
             color={"#414849"}
           />
         </TouchableOpacity>
+
 
         {dropdownOpen ? (
           <View style={styles.modal}>
@@ -157,6 +173,25 @@ const Itinerary = () => {
           </View>
         ) : null}
       </View>
+
+            <View style={styles.modal}>
+              <Button
+                title="Current Vibes"
+                onPress={() => {
+                  setOption("currentItinerary");
+                  setDropdownOpen(!dropdownOpen);
+                }}
+              />
+              <Button
+                title="Past Vibes"
+                onPress={() => {
+                  setOption("archivedItinerary");
+                  setDropdownOpen(!dropdownOpen);
+                }}
+              />
+            </View>
+            : null}
+
 
       {isLoggedIn && itineraryItems.length > 0 ? (
         option === "currentItinerary" ? (
