@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Image, View, Text, Dimensions, TouchableOpacity } from "react-native";
 
 export default function Restaurants({ restaurant, navigation }) {
-  // console.log(restaurant)
   return (
     <TouchableOpacity onPress={() => navigation.navigate("SingleActivity", { activity: restaurant })}>
       <View style={styles.cardContainer}>
@@ -15,11 +14,6 @@ export default function Restaurants({ restaurant, navigation }) {
         ) : null}
         <View style={styles.textContainer}>
           <Text style={styles.attractionName}>{restaurant.name}</Text>
-          {/* <Text>
-            {restaurant.description
-              ? restaurant.description
-              : "No description available for this attraction"}
-          </Text> */}
         </View>
       </View>
     </TouchableOpacity>
