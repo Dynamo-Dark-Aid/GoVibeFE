@@ -14,58 +14,38 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { logout } from "./slices/authSlice";
 import Login from "./Login";
 
-
 const Profile = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userName = useSelector((state) => state.auth.userName);
+  const activityItems = useSelector((state) => state.activity.activityItems);
+  const itineraryItems = useSelector((state) => state.itinerary.itineraryItems);
+  const completedCount = useSelector((state) => state.user.completedCount);
+
+  const favoriteVibesCount = activityItems.length;
+  const currentVibesCount = itineraryItems.length;
 
   const handleLogout = () => {
     dispatch(logout()); // Dispatch the loginSuccess action
   };
 
-  console.log("User is not logged in", isLoggedIn)
   if (!isLoggedIn) {
-    return (
-      <Login />
-      // <SafeAreaView style={styles.container}>
-      //   <View style={styles.headerContainer}>
-      //     <Text style={styles.header}>Go Vibe</Text>
-      //     <MaterialIcons
-      //       name="location-on"
-      //       size={50}
-      //       color="#2757F0"
-      //       style={styles.icon}
-      //     />
-      //   </View>
-
-      //   <View style={styles.containerTwo}>
-      //     <Text style={styles.centerText}>Favorite your vibes,</Text>
-      //     <Text style={styles.centerText}> share your vibes.</Text>
-      //     <Text style={styles.centerText}>Discover your vibe.</Text>
-      //   </View>
-      //   <View>
-      //     <TouchableOpacity
-      //       style={styles.button}
-      //       onPress={() => navigation.navigate("Login")}
-      //     >
-      //       <Text style={styles.buttonText}>Sign in</Text>
-      //     </TouchableOpacity>
-      //     <TouchableOpacity
-      //       style={styles.button}
-      //       onPress={() => navigation.navigate("SignUp")}
-      //     >
-      //       <Text style={styles.buttonText}>Create an account</Text>
-      //     </TouchableOpacity>
-      //   </View>
-      // </SafeAreaView>
-    );
+    return <Login />;
   }
 
   return (
     <SafeAreaView style={styles.containerThree}>
       <Text style={styles.centerText}>Welcome, {userName}</Text>
+      <Text style={styles.centerText}>
+        You have {favoriteVibesCount} favorite vibes.
+      </Text>
+      <Text style={styles.centerText}>
+        You have {currentVibesCount} vibes for today.
+      </Text>
+      <Text style={styles.centerText}>
+        Total vibes Completed: {completedCount}
+      </Text>
 
       <View>
         <TouchableOpacity style={styles.button} onPress={handleLogout}>

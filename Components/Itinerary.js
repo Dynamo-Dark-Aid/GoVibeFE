@@ -1,36 +1,22 @@
-import React, { useEffect, useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  FlatList,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Animated,
-  Share,
-  SafeAreaView,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import React, { useEffect, useState, useRef, createRef } from 'react';
+import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Animated, Share, SafeAreaView, ScrollView } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { SwipeableRef } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  displayItinerary,
-  displayArchivedItinerary,
-  removeFromItinerary,
-  archiveItinerary,
-  clearItineraryItems,
-} from './slices/itinerarySlice';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { displayItinerary, displayArchivedItinerary, removeFromItinerary, archiveItinerary } from './slices/itinerarySlice';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { clearItineraryItems } from './slices/itinerarySlice';
+import { incrementCompletedCount } from "./slices/userSlice";
+
 
 const Itinerary = () => {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const itineraryItems = useSelector((state) => state.itinerary.itineraryItems);
-  const [option, setOption] = useState('currentItinerary');
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const itineraryItems = useSelector(state => state.itinerary.itineraryItems);
+  const [option, setOption] = useState("currentItinerary");
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const swipeableRef = useRef({});
+
 
   const [deletedItemId, setDeletedItemId] = useState(null);
   const [archivedItemId, setArchivedItemId] = useState(null);
@@ -38,11 +24,11 @@ const Itinerary = () => {
   const [openSwipeableId, setOpenSwipeableId] = useState(null);
 
   useEffect(() => {
-    if (isLoggedIn && option === 'currentItinerary') {
-      console.log('currentItinerary should be displayed');
+    if (isLoggedIn && option === "currentItinerary") {
+      console.log("currentItinerary should be displayed")
       dispatch(displayItinerary());
-    } else if (isLoggedIn && option === 'archivedItinerary') {
-      console.log('archivedItinerary should be displayed');
+    } else if (isLoggedIn && option === "archivedItinerary") {
+      console.log("archivedItinerary should be displayed")
       dispatch(displayArchivedItinerary());
       dispatch(clearItineraryItems());
     }
@@ -56,27 +42,28 @@ const Itinerary = () => {
   const handleArchive = (item) => {
     dispatch(archiveItinerary(item));
     setOpenSwipeableId(item.id);
+    dispatch(incrementCompletedCount());
   };
+
 
   useEffect(() => {
     if (openSwipeableId) {
       swipeableRef.current[openSwipeableId]?.close?.();
       setOpenSwipeableId(null);
     }
-  }, [openSwipeableId]);
+  }, [openSwipeableId])
 
-  const handleShare = async () => {
-    const link = generateLinkFromItineraryItems(itineraryItems);
-
+  const handleShare = () => {
+    const message = 'A Vibe Has Been Shared With You!';
     Share.share({
-      message: `A Vibe Has Been Shared With You! ${link}`,
+      message,
     })
       .then((result) => {
         if (result.action === Share.sharedAction) {
-          if (result.activityType === 'com.apple.UIKit.activity.CopyToPasteboard') {
-            Alert.alert('Copied Link!', '', [{ text: 'OK', onPress: () => {}, style: 'cancel' }], {
-              cancelable: true,
-            });
+          if (result.activityType) {
+            // Shared with activity type
+          } else {
+            // Shared
           }
         } else if (result.action === Share.dismissedAction) {
           // Dismissed
@@ -85,18 +72,6 @@ const Itinerary = () => {
       .catch((error) => {
         console.log(error);
       });
-  };
-
-  const generateLinkFromItineraryItems = (items) => {
-    const baseUrl = 'https://govibeapi.onrender.com/itineraries'; // Replace with your app or website URL
-    const encodedItems = items.map((item) => {
-      const encodedName = encodeURIComponent(item.name);
-      const encodedLocation = encodeURIComponent(item.location);
-      return `${encodedName}/${encodedLocation}`;
-    });
-    const query = encodedItems.join('&'); // Combine multiple items using '&' separator
-    const link = `${baseUrl}?${query}`;
-    return link;
   };
 
   const renderRightActions = (progress, dragX) => {
@@ -132,8 +107,8 @@ const Itinerary = () => {
   };
 
   const toggleMenu = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+    setDropdownOpen(!dropdownOpen)
+  }
 
   return (
     <>
@@ -141,40 +116,45 @@ const Itinerary = () => {
         <ScrollView>
           <View style={styles.headerContainer}>
             <View>
-              <Text style={styles.header}>Itinerary</Text>
+              <Text style={styles.header}>Vibes</Text>
             </View>
             <View style={styles.dropdownContainer}>
-              <TouchableOpacity onPress={toggleMenu}>
-                <MaterialCommunityIcons name="chevron-down-circle" size={44} color={'#414849'} />
+              <TouchableOpacity onPress={() => toggleMenu()}>
+                <MaterialCommunityIcons
+                  name="chevron-down-circle"
+                  size={44}
+                  color={"#414849"}
+                />
               </TouchableOpacity>
             </View>
-          </View>
 
-          {dropdownOpen && (
+          </View>
+          {dropdownOpen ?
+
             <View style={styles.modal}>
               <Button
-                title="Current Itinerary"
+                title="Current Vibes"
                 onPress={() => {
-                  setOption('currentItinerary');
+                  setOption("currentItinerary");
                   setDropdownOpen(!dropdownOpen);
                 }}
               />
               <Button
-                title="Past Itineraries"
+                title="Past Vibes"
                 onPress={() => {
-                  setOption('archivedItinerary');
+                  setOption("archivedItinerary");
                   setDropdownOpen(!dropdownOpen);
                 }}
               />
             </View>
-          )}
+            : null}
 
           {isLoggedIn && itineraryItems.length > 0 ? (
-            option === 'currentItinerary' ? (
+            option === "currentItinerary" ? (
               itineraryItems.map((item, index) => (
                 <Swipeable
                   key={item.id}
-                  ref={(ref) => (swipeableRef.current[item.id] = ref)}
+                  ref={ref => (swipeableRef.current[item.id] = ref)}
                   renderRightActions={renderRightActions}
                   renderLeftActions={renderLeftActions}
                   onSwipeableLeftOpen={() => handleDelete(item)}
@@ -207,14 +187,14 @@ const Itinerary = () => {
               <Text style={styles.noVibeText}>No Vibe Created</Text>
             </View>
           )}
-            
+
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
             <Text style={styles.shareButtonText}>Share Vibe</Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </>
-  );
+  )
 };
 
 const styles = StyleSheet.create({
@@ -310,24 +290,24 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     width: 225,
     height: 80,
     borderRadius: 10,
     zIndex: 2,
-    position: 'absolute',
-    top: 90,
+    position: "absolute",
+    top: 90
   },
   header: {
-    color: 'black',
+    color: "black",
     fontSize: 50,
-    fontFamily: 'Futura-CondensedExtraBold',
-    margin: 16,
+    fontFamily: "Futura-CondensedExtraBold",
+    margin: 16
   },
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
+    flexDirection: "row",
+    alignItems: "baseline"
+  }
 });
 
 export default Itinerary;
