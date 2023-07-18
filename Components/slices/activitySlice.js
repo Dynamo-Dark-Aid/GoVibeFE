@@ -3,60 +3,78 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 
 export const getActivities = createAsyncThunk('activity/getActivities', async (_, { getState }) => {
-    try {
-        const { auth } = getState()
-        const { userToken } = auth
+  try {
+    const { auth } = getState();
+    const { userToken } = auth;
 
-        const response = await axios.get('https://govibeapi.onrender.com/activities', {
-            headers: {
-                authorization: userToken
-            }
-          });
-        return response.data;
-    } catch (error) {
-        Alert.alert('Error getting activities:', error);
-    }
-})
+    const response = await axios.get('https://govibeapi.onrender.com/activities', {
+      headers: {
+        authorization: userToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    Alert.alert('Error getting activities:', error);
+  }
+});
 
 export const addActivity = createAsyncThunk('activity/addActivity', async (activity, { getState }) => {
-    try {
-      const { auth } = getState()
-      const { userToken } = auth
+  try {
+    const { auth } = getState();
+    const { userToken } = auth;
 
-      const response = await axios.post('https://govibeapi.onrender.com/add-activity', activity, {
-        headers: {
-            authorization: userToken
-        }
-      });
+    const response = await axios.post('https://govibeapi.onrender.com/add-activity', activity, {
+      headers: {
+        authorization: userToken,
+      },
+    });
 
-      return response.data;
-    } catch (error) {
-        Alert.alert('Error saving activity:', error);
-    }
-})
+    return response.data;
+  } catch (error) {
+    Alert.alert('Error saving activity:', error);
+  }
+});
 
 export const removeActivity = createAsyncThunk('activity/removeActivity', async (activity, { getState }) => {
-    try {
-        const { auth, activity: { activityItems } } = getState();
-        const { userToken } = auth
-        const userActivity = activityItems.find(item => item.name === activity.name);
+  try {
+    const { auth, activity: { activityItems } } = getState();
+    const { userToken } = auth;
+    const userActivity = activityItems.find(item => item.name === activity.name);
 
-        if (!userActivity) {
-            throw new Error('Activity not found');
-        }
-
-        await axios.delete(`https://govibeapi.onrender.com/remove-activity/${userActivity.id}`, {
-            headers: {
-                authorization: userToken
-            }
-          });
-
-        return { id: userActivity.id };
-    } catch (error) {
-        Alert.alert('Error removing activity:', error)
-        throw error
+    if (!userActivity) {
+      throw new Error('Activity not found');
     }
-})
+
+    await axios.delete(`https://govibeapi.onrender.com/remove-activity/${userActivity.id}`, {
+      headers: {
+        authorization: userToken,
+      },
+    });
+
+    return { id: userActivity.id };
+  } catch (error) {
+    Alert.alert('Error removing activity:', error);
+    throw error;
+  }
+});
+
+export const addToFavorites = createAsyncThunk('activity/addToFavorites', async (activity, { dispatch }) => {
+    try {
+      const addedActivity = await dispatch(addActivity(activity));
+      return addedActivity.payload; // Make sure addedActivity.payload contains the correct data.
+    } catch (error) {
+      Alert.alert('Error adding to favorites:', error);
+    }
+  });
+
+  export const removeFromFavorites = createAsyncThunk('activity/removeFromFavorites', async (activity, { dispatch }) => {
+    try {
+      const removedActivity = await dispatch(removeActivity(activity));
+      return removedActivity.payload; // Make sure removedActivity.payload contains the correct data.
+    } catch (error) {
+      Alert.alert('Error removing from favorites:', error);
+    }
+  });
 
 const activitySlice = createSlice({
     name: 'activity',

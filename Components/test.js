@@ -23,7 +23,6 @@ import {
   clearItineraryItems,
 } from './slices/itinerarySlice';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { incrementCompletedCount } from './slices/userSlice';
 
 const Itinerary = () => {
   const dispatch = useDispatch();
@@ -57,7 +56,6 @@ const Itinerary = () => {
   const handleArchive = (item) => {
     dispatch(archiveItinerary(item));
     setOpenSwipeableId(item.id);
-    dispatch(incrementCompletedCount()); // Increment completed count on profile page
   };
 
   useEffect(() => {
@@ -93,7 +91,8 @@ const Itinerary = () => {
     const baseUrl = 'https://govibeapi.onrender.com/itineraries'; // Replace with your app or website URL
     const encodedItems = items.map((item) => {
       const encodedName = encodeURIComponent(item.name);
-      return `${encodedName}`;
+      const encodedLocation = encodeURIComponent(item.location);
+      return `${encodedName}/${encodedLocation}`;
     });
     const query = encodedItems.join('&'); // Combine multiple items using '&' separator
     const link = `${baseUrl}?${query}`;
@@ -138,63 +137,50 @@ const Itinerary = () => {
 
   return (
     <>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
         <ScrollView>
-          <View style={styles.contentContainer}>
-            <View style={styles.headerContainer}>
-              <View>
-                <Text style={styles.header}>Vibes</Text>
-              </View>
-              <View style={styles.dropdownContainer}>
-                <TouchableOpacity onPress={toggleMenu}>
-                  <MaterialCommunityIcons name="chevron-down-circle" size={44} color={'#414849'} />
-                </TouchableOpacity>
-              </View>
+          <View style={styles.headerContainer}>
+            <View>
+              <Text style={styles.header}>Itinerary</Text>
             </View>
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity onPress={toggleMenu}>
+                <MaterialCommunityIcons name="chevron-down-circle" size={44} color={'#414849'} />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-            {dropdownOpen && (
-              <View style={styles.modal}>
-                <Button
-                  title="Current Vibes"
-                  onPress={() => {
-                    setOption('currentItinerary');
-                    setDropdownOpen(!dropdownOpen);
-                  }}
-                />
-                <Button
-                  title="Past Vibes"
-                  onPress={() => {
-                    setOption('archivedItinerary');
-                    setDropdownOpen(!dropdownOpen);
-                  }}
-                />
-              </View>
-            )}
+          {dropdownOpen && (
+            <View style={styles.modal}>
+              <Button
+                title="Current Itinerary"
+                onPress={() => {
+                  setOption('currentItinerary');
+                  setDropdownOpen(!dropdownOpen);
+                }}
+              />
+              <Button
+                title="Past Itineraries"
+                onPress={() => {
+                  setOption('archivedItinerary');
+                  setDropdownOpen(!dropdownOpen);
+                }}
+              />
+            </View>
+          )}
 
-            {isLoggedIn && itineraryItems.length > 0 ? (
-              option === 'currentItinerary' ? (
-                itineraryItems.map((item, index) => (
-                  <Swipeable
-                    key={item.id}
-                    ref={(ref) => (swipeableRef.current[item.id] = ref)}
-                    renderRightActions={renderRightActions}
-                    renderLeftActions={renderLeftActions}
-                    onSwipeableLeftOpen={() => handleDelete(item)}
-                    onSwipeableRightOpen={() => handleArchive(item)}
-                  >
-                    <View style={styles.activityContainer}>
-                      <Image source={{ uri: item.image }} style={styles.activityImage} />
-                      <View style={styles.activityDetails}>
-                        <Text style={styles.activityName}>{item.name}</Text>
-                        <Text style={styles.activityAddress}>{item.location}</Text>
-                        {/* <Text style={styles.activityAddress}>{item.description}</Text> */}
-                      </View>
-                    </View>
-                  </Swipeable>
-                ))
-              ) : (
-                itineraryItems.map((item, index) => (
-                  <View style={styles.activityContainer} key={item.id}>
+          {isLoggedIn && itineraryItems.length > 0 ? (
+            option === 'currentItinerary' ? (
+              itineraryItems.map((item, index) => (
+                <Swipeable
+                  key={item.id}
+                  ref={(ref) => (swipeableRef.current[item.id] = ref)}
+                  renderRightActions={renderRightActions}
+                  renderLeftActions={renderLeftActions}
+                  onSwipeableLeftOpen={() => handleDelete(item)}
+                  onSwipeableRightOpen={() => handleArchive(item)}
+                >
+                  <View style={styles.activityContainer}>
                     <Image source={{ uri: item.image }} style={styles.activityImage} />
                     <View style={styles.activityDetails}>
                       <Text style={styles.activityName}>{item.name}</Text>
@@ -202,19 +188,30 @@ const Itinerary = () => {
                       {/* <Text style={styles.activityAddress}>{item.description}</Text> */}
                     </View>
                   </View>
-                ))
-              )
+                </Swipeable>
+              ))
             ) : (
-              <View style={styles.noVibeContainer}>
-                <Text style={styles.noVibeText}>No Vibe Created</Text>
-              </View>
-            )}
-          </View>
+              itineraryItems.map((item, index) => (
+                <View style={styles.activityContainer} key={item.id}>
+                  <Image source={{ uri: item.image }} style={styles.activityImage} />
+                  <View style={styles.activityDetails}>
+                    <Text style={styles.activityName}>{item.name}</Text>
+                    <Text style={styles.activityAddress}>{item.location}</Text>
+                    {/* <Text style={styles.activityAddress}>{item.description}</Text> */}
+                  </View>
+                </View>
+              ))
+            )
+          ) : (
+            <View style={styles.noVibeContainer}>
+              <Text style={styles.noVibeText}>No Vibe Created</Text>
+            </View>
+          )}
+            
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Text style={styles.shareButtonText}>Share Vibe</Text>
+          </TouchableOpacity>
         </ScrollView>
-
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Share Vibe</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     </>
   );
@@ -223,10 +220,8 @@ const Itinerary = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
     backgroundColor: '#FFFFFF',
-  },
-  contentContainer: {
-    paddingBottom: 64,
   },
   activityContainer: {
     flexDirection: 'row',
@@ -291,15 +286,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   shareButton: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 12,
     backgroundColor: '#2757F0',
+    marginVertical: 8,
     borderRadius: 4,
+    marginHorizontal: 16,
   },
   shareButtonText: {
     color: '#FFFFFF',
@@ -338,4 +331,3 @@ const styles = StyleSheet.create({
 });
 
 export default Itinerary;
-
