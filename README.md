@@ -74,3 +74,12 @@ Michelle Aberizk
 2. michelle.aberizk@gmail.com 
 3. https://www.linkedin.com/in/michelle-aberizk/
 4. https://github.com/maberizk
+
+Danny Yoo
+1. https://dannyyoo.site
+2. dannyyoo714@gmail.com
+3. https://www.linkedin.com/in/danny-yoo/
+4. https://github.com/danny8823
+
+
+
