@@ -2,6 +2,8 @@
 
 A mobile app that blends spontaneity with adventure, Go Vibe addresses the pressing issue of loneliness by empowering users to explore thrilling activities and forge authentic connections. With just a tap, users unlock five vibrant vibes, each presenting opportunities to discover new attractions, trails, and restaurants, seamlessly integrated through Google Maps, TravelAdvisor, and TrailsAPI. The personalized utilization metrics feature, 'Profile', celebrates users' adventurous spirit, while 'Favorites' and 'Today's Vibe' optimize organization and planning, cultivating a vibrant community of intrepid adventurers.
 
+https://www.youtube.com/watch?v=1M9ufTE77OY
+
 # Table of Contents
 1. Installation
 2. Usage
